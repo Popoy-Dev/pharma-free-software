@@ -6,6 +6,7 @@ import Employees from '../components/Employees';
 import Attendance from '../components/Attendance';
 import Products from '../components/Products';
 import Inventory from '../components/Inventory';
+import Order from '../components/Order';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -17,6 +18,7 @@ const App: React.FC = () => {
     { icon: UserOutlined, label: 'Cashfund' },
     { icon: UserOutlined, label: 'Products' },
     { icon: UserOutlined, label: 'Inventory' },
+    { icon: UserOutlined, label: 'Order' },
     { icon: UserOutlined, label: 'Employees' },
     { icon: VideoCameraOutlined, label: 'Attendance' },
   ];
@@ -26,6 +28,7 @@ const App: React.FC = () => {
       Cashfund: <Cashfund />,
       Products: <Products />,
       Inventory: <Inventory />,
+      Order: <Order />,
       Employees: <Employees />,
       Attendance: <Attendance />,
     };
