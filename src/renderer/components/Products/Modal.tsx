@@ -49,16 +49,17 @@ const ProductModal = ({
         <Form.Item<FieldType>
           label="Product name"
           name="product_name"
-          rules={[{ required: true, message: 'Please input full name!' }]}
+          rules={[{ required: true, message: 'Please input Product name!' }]}
         >
           <Input />
         </Form.Item>
-        <Form.Item<FieldType>
-          label="Category"
-          name="category"
-          rules={[{ required: true, message: 'Please input position!' }]}
-        >
-          <Input />
+
+        <Form.Item label="Category" name="category">
+          <Select>
+            <Select.Option value="Branded">Branded</Select.Option>
+            <Select.Option value="Generic">Generic</Select.Option>
+            <Select.Option value="Galenical">GALENICAL</Select.Option>
+          </Select>
         </Form.Item>
         <Form.Item<FieldType>
           label="Indication"
