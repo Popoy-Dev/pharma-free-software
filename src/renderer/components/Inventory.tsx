@@ -32,6 +32,9 @@ function Inventory() {
       product_name: '',
       category: '',
       indication: '',
+      manufacture_price: '',
+      selling_price: '',
+      isVat: '',
     });
     setSelectProduct('');
   };

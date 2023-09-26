@@ -81,7 +81,7 @@ const ProductModal = ({
         >
           <InputNumber style={{ width: '100%' }} maxLength={11} />
         </Form.Item>
-        <Form.Item label="Select" name="isVat">
+        <Form.Item label="Vat/Non-Vat" name="isVat">
           <Select>
             <Select.Option value="Vat">Vat</Select.Option>
             <Select.Option value="Non-Vat">Non-Vat</Select.Option>
