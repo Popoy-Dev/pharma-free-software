@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import React, { useState, useEffect } from 'react';
-import { Button, Form } from 'antd';
+import { Form } from 'antd';
 import { v4 as uuid } from 'uuid';
 
 import moment from 'moment';
@@ -26,18 +26,7 @@ function Inventory() {
 
   // Format the current date in the desired format
   const formattedDate = currentDate.format('YYYY-MM-DD hh:mm:ss A');
-  const showModal = () => {
-    setOpen(true);
-    form.setFieldsValue({
-      product_name: '',
-      category: '',
-      indication: '',
-      manufacture_price: '',
-      selling_price: '',
-      isVat: '',
-    });
-    setSelectProduct('');
-  };
+
   const handleCancel = () => {
     setOpen(false);
     setInventoryProducts([]);
@@ -119,9 +108,6 @@ function Inventory() {
     <div>
       <h1>Inventory</h1>
       <div style={{ textAlign: 'right' }}>
-        <Button type="primary" onClick={showModal} style={{ marginBottom: '12px' }}>
-          add product
-        </Button>
         <ProductInventoryModal
           title="Title"
           open={open}
