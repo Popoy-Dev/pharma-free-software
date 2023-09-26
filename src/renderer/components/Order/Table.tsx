@@ -9,13 +9,13 @@ interface DataType {
   stock: string;
 }
 
-const ProductInventoryTable = ({ products }): any => {
+const ProductInventoryTable = ({ products, viewInventory }): any => {
   const [cartList, setCartList] = useState<any>([]);
   const handleAddList = (record) => {
     const newCartList = [...cartList, record];
     setCartList(newCartList);
   };
-  console.log('newCartList', cartList);
+  console.log('viewInventory', viewInventory);
   const columns: ColumnsType<DataType> = [
     {
       title: 'Product Name',
@@ -45,9 +45,12 @@ const ProductInventoryTable = ({ products }): any => {
     },
   ];
   const total = cartList.reduce((acc, item) => acc + parseFloat(item.selling_price), 0).toFixed(2);
-  const handleRemoveItem = (item) => {
-    console.log('item', item);
-    return '';
+  const handleRemoveItem = (itemToRemove) => {
+    // Use filter to create a new cartList without the item to be removed
+    const updatedCartList = cartList.filter((item) => item !== itemToRemove);
+
+    // Update the cartList state with the updated list
+    setCartList(updatedCartList);
   };
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
