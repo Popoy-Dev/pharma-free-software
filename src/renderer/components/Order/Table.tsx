@@ -11,8 +11,13 @@ interface DataType {
 
 const ProductInventoryTable = ({ products, viewInventory }): any => {
   const [cartList, setCartList] = useState<any>([]);
-  const handleAddList = (record) => {
-    const newCartList = [...cartList, record];
+  const handleAddList = (record, quantity) => {
+    const data = {
+      ...record,
+      quantity,
+    };
+
+    const newCartList = [...cartList, data];
     setCartList(newCartList);
   };
   const [data, setData] = useState([]); // Your data here
@@ -56,7 +61,7 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
           <Button
             type="primary"
             disabled={Number(data[i]) > Number(record.stockTotal)}
-            onClick={() => handleAddList(record)}
+            onClick={() => handleAddList(record, data[i])}
           >
             Add
           </Button>
@@ -84,6 +89,11 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
       title: 'Price',
       dataIndex: 'selling_price',
       key: 'selling_price',
+    },
+    {
+      title: 'Quantity',
+      dataIndex: 'quantity',
+      key: 'quantity',
     },
     {
       title: 'Action',
