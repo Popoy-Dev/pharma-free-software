@@ -77,7 +77,9 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
     // Update the cartList state with the updated list
     setCartList(updatedCartList);
   };
-  const total = cartList.reduce((acc, item) => acc + parseFloat(item.selling_price), 0).toFixed(2);
+  const total = cartList
+    .reduce((acc, item) => acc + parseFloat(item.selling_price) * item.quantity, 0)
+    .toFixed(2);
   // Refactored order list columns
   const orderListColumns: ColumnsType<DataType> = [
     {
