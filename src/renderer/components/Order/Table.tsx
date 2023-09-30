@@ -15,12 +15,15 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
     const newCartList = [...cartList, record];
     setCartList(newCartList);
   };
+  const [data, setData] = useState([]); // Your data here
+  const [focusedInput, setFocusedInput] = useState(null);
   console.log('viewInventory', viewInventory);
-  console.log('cartList', cartList);
 
-  const onChange = (value: 1 | null) => {
-    console.log('changed', value);
-    return '';
+  const handleInputChange = (event: any, index: any) => {
+    const newData: any = [...data];
+    newData[index] = event;
+    setData(newData);
+    setFocusedInput(index); // Update the focused input index
   };
   const columns: ColumnsType<DataType> = [
     {
@@ -40,11 +43,21 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
     },
     {
       title: 'Action',
-      key: 'product.id',
-      render: (_, record) => (
+      key: 'id',
+      render: (_, record, i) => (
         <Space size="middle">
-          <InputNumber min={1} onChange={onChange} disabled={Number(record.stockTotal) === 0} />
-          <Button type="primary" onClick={() => handleAddList(record)}>
+          <InputNumber
+            key={i} // Add a unique key
+            onChange={(event) => handleInputChange(event, i)}
+            disabled={Number(record.stockTotal) === 0}
+            value={data[i] || 0}
+            autoFocus={focusedInput === i} // Autofocus based on focusedInput state
+          />
+          <Button
+            type="primary"
+            disabled={Number(data[i]) > Number(record.stockTotal)}
+            onClick={() => handleAddList(record)}
+          >
             Add
           </Button>
         </Space>
