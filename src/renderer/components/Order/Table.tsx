@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
-import { Button, Card, InputNumber, Space, Table } from 'antd';
+import { Button, Card, InputNumber, Space, Table, Checkbox } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
+import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 
 interface DataType {
+  quantity: number;
+  selling_price: any;
+  senior_selling_price: number;
   id: number;
   key: string;
   product_name: string;
@@ -11,18 +15,71 @@ interface DataType {
 
 const ProductInventoryTable = ({ products, viewInventory }): any => {
   const [cartList, setCartList] = useState<any>([]);
+  const [data, setData] = useState([]); // Your data here
+  const [focusedInput, setFocusedInput] = useState(null);
+  const [isSeniorGlobalValue, setIsSenior] = useState(false);
+  console.log('viewInventory', viewInventory);
+
+  const seniorItemComputation = (isSenior, newCartList) => {
+    let total = 0;
+    let seniorDiscount = 0;
+    if (isSenior) {
+      const updatedCartList = newCartList.map((list) => {
+        if (list.isVat === 'Vat') {
+          const vatValue = 28 / 25;
+          const vatComputation = list.selling_price / vatValue;
+          seniorDiscount = vatComputation * (20 / 100);
+
+          // eslint-disable-next-line no-unused-vars
+          total = list.selling_price - seniorDiscount;
+
+          return {
+            ...list,
+            senior_selling_price: total.toFixed(2),
+          };
+        }
+        const vatComputation = list.selling_price;
+
+        seniorDiscount = vatComputation * (20 / 100);
+        total = vatComputation - seniorDiscount;
+
+        return {
+          ...list,
+          senior_selling_price: total.toFixed(2),
+        };
+      });
+      setCartList(updatedCartList);
+
+      // Now, updatedCartList contains the updated prices
+    } else {
+      console.log('elsee');
+      // Recompute prices without the discount when isSenior is false
+      const updatedCartList = newCartList.map((list) => {
+        if (list.isVat === 'Vat') {
+          return {
+            ...list,
+            senior_selling_price: null,
+          };
+        }
+        // Revert to the original price by adding 12 and 20
+        return {
+          ...list,
+          senior_selling_price: null,
+        };
+      });
+      setCartList(updatedCartList);
+    }
+  };
+
   const handleAddList = (record, quantity) => {
-    const data = {
+    const dataList = {
       ...record,
       quantity,
     };
 
-    const newCartList = [...cartList, data];
-    setCartList(newCartList);
+    const newCartList = [...cartList, dataList];
+    seniorItemComputation(isSeniorGlobalValue, newCartList);
   };
-  const [data, setData] = useState([]); // Your data here
-  const [focusedInput, setFocusedInput] = useState(null);
-  console.log('viewInventory', viewInventory);
 
   const handleInputChange = (event: any, index: any) => {
     const newData: any = [...data];
@@ -70,7 +127,6 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
     },
   ];
   const handleRemoveItem = (itemToRemove) => {
-    console.log('itemToRemove', itemToRemove);
     // Use filter to create a new cartList without the item to be removed
     const updatedCartList = cartList.filter((item) => item.key !== itemToRemove.key);
 
@@ -88,14 +144,36 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
       key: 'product_name',
     },
     {
-      title: 'Price',
-      dataIndex: 'selling_price',
-      key: 'selling_price',
+      title: 'Price x Quantity',
+      key: 'price', // Define a unique key for the column
+      render: (_, record) => {
+        // Use a conditional statement to check the property and render accordingly
+        const priceToDisplay =
+          !record.senior_selling_price || record.senior_selling_price === null
+            ? record.selling_price
+            : record.senior_selling_price;
+
+        return (
+          <span>
+            {priceToDisplay} x {record.quantity}
+          </span>
+        );
+      },
     },
     {
-      title: 'Quantity',
-      dataIndex: 'quantity',
+      title: 'Total',
       key: 'quantity',
+      render: (_, record) => {
+        // Use a conditional statement to check the property and render accordingly
+        const price =
+          !record.senior_selling_price || record.senior_selling_price === null
+            ? record.selling_price
+            : record.senior_selling_price;
+
+        const priceTodisplay = price * record.quantity;
+
+        return <span>{priceTodisplay}</span>;
+      },
     },
     {
       title: 'Action',
@@ -133,11 +211,14 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
       pagination={false}
     />
   );
-
+  const handleSenior = (e: CheckboxChangeEvent) => {
+    setIsSenior(e.target.checked);
+    seniorItemComputation(e.target.checked, cartList);
+  };
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
       <Table
-        style={{ width: '75%' }}
+        style={{ width: '55%' }}
         columns={columns}
         dataSource={products.map((product) => ({
           ...product,
@@ -146,9 +227,10 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
       />
       <Card
         title="Order list"
+        extra={<Checkbox onChange={handleSenior}>Senior </Checkbox>}
         bordered={false}
         style={{
-          width: '25%',
+          width: '45%',
           marginLeft: '12px',
           boxShadow: '5px 5px 5px 10px #888888',
           overflowY: 'auto',
