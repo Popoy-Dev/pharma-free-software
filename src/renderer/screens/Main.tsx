@@ -15,6 +15,7 @@ const App: React.FC = () => {
   const { colorBgContainer } = theme.useToken().token;
 
   const sideBarItems = [
+    { icon: UserOutlined, label: 'Dashboard' },
     { icon: UserOutlined, label: 'Cashfund' },
     { icon: UserOutlined, label: 'Products' },
     { icon: UserOutlined, label: 'Inventory' },
@@ -25,6 +26,7 @@ const App: React.FC = () => {
 
   const handleMenuClick = (item) => {
     const components = {
+      Dashboard: <Cashfund />,
       Cashfund: <Cashfund />,
       Products: <Products />,
       Inventory: <Inventory />,
