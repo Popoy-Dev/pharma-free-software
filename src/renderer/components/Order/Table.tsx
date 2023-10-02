@@ -241,12 +241,16 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
           <div
             style={{
               position: 'absolute',
+              display: 'inline',
               bottom: 0,
               right: 0,
               marginRight: '12px',
+              marginBottom: '12px',
             }}
           >
-            <h3>Total: {total}</h3>
+            <div>
+              Total: {total} <Button type="primary">Buy</Button>
+            </div>
           </div>
         </div>
       </Card>
