@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Card, InputNumber, Space, Table, Checkbox } from 'antd';
+import { Button, Card, InputNumber, Space, Table, Checkbox, notification } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import moment from 'moment';
@@ -21,6 +21,7 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
   const [data, setData] = useState([]); // Your data here
   const [focusedInput, setFocusedInput] = useState(null);
   const [isSeniorGlobalValue, setIsSenior] = useState(false);
+  const [api, contextHolder] = notification.useNotification();
   // Create a Moment.js object for the current date
   const currentDate = moment();
   const id = uuid();
@@ -153,6 +154,12 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
     return (sellingPrice - manufacturePrice) * quantity;
   };
   const totalProfit = cartList.reduce((acc, item) => acc + calculateItemProfit(item), 0).toFixed(2);
+  const openNotificationWithIcon = (type: any) => {
+    api[type]({
+      message: 'Order Success!',
+      description: 'Order has been successfully placed.',
+    });
+  };
 
   // Refactored order list columns
   const orderListColumns: ColumnsType<DataType> = [
@@ -235,22 +242,25 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
   };
 
   const handleSaveOrder = async () => {
-    const result = await collections.order.insert({
-      id,
-      order: cartList,
-      totalProfit,
-      total,
-      date: formattedDate,
-    });
-    console.log('result plain', result);
+    if (cartList.length !== 0) {
+      const result = await collections.order.insert({
+        id,
+        order: cartList,
+        totalProfit,
+        total,
+        date: formattedDate,
+      });
+      // eslint-disable-next-line no-underscore-dangle
 
-    if (result.isInstanceOfRxDocument) {
-      console.log('result truee', result);
-      // setCartList([])
+      if (result.isInstanceOfRxDocument) {
+        openNotificationWithIcon('success');
+        setCartList([]);
+      }
     }
   };
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      {contextHolder}
       <Table
         style={{ width: '55%' }}
         columns={columns}
@@ -284,9 +294,11 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
           >
             <div>
               Total: {total}{' '}
-              <Button type="primary" onClick={handleSaveOrder}>
-                Buy
-              </Button>
+              {cartList.length !== 0 && (
+                <Button type="primary" onClick={handleSaveOrder}>
+                  Buy
+                </Button>
+              )}
               TotalProfit: {totalProfit}{' '}
             </div>
           </div>
