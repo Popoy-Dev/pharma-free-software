@@ -20,7 +20,6 @@ function Project() {
   const [modalText, setModalText] = useState('Content of the modal');
   // const [isProjectEditModal, setIsProjectEditModalVisible] = useState(false);
   const [editValue, setEditValue] = useState<any>({});
-  console.log('projects', projects);
 
   // Create a Moment.js object for the current date
   const currentDate = moment();
