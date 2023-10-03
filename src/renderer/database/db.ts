@@ -1,10 +1,16 @@
-import { createRxDatabase, addRxPlugin } from 'rxdb';
+import { createRxDatabase, addRxPlugin, removeRxDatabase } from 'rxdb';
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 import { RxDBDevModePlugin } from 'rxdb/plugins/dev-mode';
 import { RxDBQueryBuilderPlugin } from 'rxdb/plugins/query-builder';
 import { RxDBMigrationPlugin } from 'rxdb/plugins/migration';
 import { RxDBUpdatePlugin } from 'rxdb/plugins/update';
-import { cashFundSchema, employeeSchema, productSchema, productInventorySchema } from './schema';
+import {
+  cashFundSchema,
+  employeeSchema,
+  productSchema,
+  productInventorySchema,
+  customerOrderSchema,
+} from './schema';
 
 addRxPlugin(RxDBDevModePlugin);
 addRxPlugin(RxDBQueryBuilderPlugin);
@@ -16,7 +22,7 @@ const db = await createRxDatabase({
   storage: getRxStorageDexie(),
 });
 // Remove the first database.
-// await removeRxDatabase('sample', getRxStorageDexie());
+await removeRxDatabase('sample', getRxStorageDexie());
 // create collections
 const collections = await db.addCollections({
   cashfund: {
@@ -30,6 +36,9 @@ const collections = await db.addCollections({
   },
   inventory: {
     schema: productInventorySchema,
+  },
+  order: {
+    schema: customerOrderSchema,
   },
 });
 

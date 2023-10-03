@@ -78,6 +78,31 @@ const productInventorySchema = {
   required: ['id', 'product_id', 'quantity', 'date'],
 };
 
+const customerOrderSchema = {
+  version: 0,
+  type: 'object',
+  primaryKey: 'id',
+  properties: {
+    id: {
+      type: 'string',
+      maxLength: 100,
+    },
+    order: {
+      type: 'object',
+    },
+    totalProfit: {
+      type: 'string',
+    },
+    total: {
+      type: 'string',
+    },
+    date: {
+      type: 'string',
+    },
+  },
+  required: ['id', 'order', 'totalProfit', 'total', 'date'],
+};
+
 const employeeSchema = {
   version: 0,
   primaryKey: 'id',
@@ -162,4 +187,11 @@ const weeklyLogSchema = {
   indexes: ['weekNumber', 'employeeId'],
 };
 
-export { cashFundSchema, employeeSchema, weeklyLogSchema, productSchema, productInventorySchema };
+export {
+  cashFundSchema,
+  employeeSchema,
+  weeklyLogSchema,
+  productSchema,
+  productInventorySchema,
+  customerOrderSchema,
+};
