@@ -127,15 +127,10 @@ function Project() {
 
     // Create a Moment.js object for the current date
     const currentDateToday = moment();
-    console.log('currentDateToday', currentDateToday);
-    console.log('cashToday', cashToday);
     // Check if the date of the first project matches the current date (ignoring time)
     if (currentDateToday.isSame(cashToday, 'day')) {
-      console.log('hello');
       setCashToday(projects[0]?.cashfund);
     } else {
-      console.log('hi');
-
       setCashToday('');
     }
   });
