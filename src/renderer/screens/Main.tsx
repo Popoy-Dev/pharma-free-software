@@ -7,6 +7,7 @@ import Attendance from '../components/Attendance';
 import Products from '../components/Products';
 import Inventory from '../components/Inventory';
 import Order from '../components/Order';
+import Dashboard from '../components/Dashboard';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -26,7 +27,7 @@ const App: React.FC = () => {
 
   const handleMenuClick = (item) => {
     const components = {
-      Dashboard: <Cashfund />,
+      Dashboard: <Dashboard />,
       Cashfund: <Cashfund />,
       Products: <Products />,
       Inventory: <Inventory />,
