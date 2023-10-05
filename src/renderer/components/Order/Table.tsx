@@ -17,7 +17,7 @@ interface DataType {
   stockTotal: string;
 }
 
-const ProductInventoryTable = ({ products, viewInventory }): any => {
+const ProductInventoryTable = ({ productsInventories }): any => {
   const [cartList, setCartList] = useState<any>([]);
   const [data, setData] = useState([]); // Your data here
   const [focusedInput, setFocusedInput] = useState(null);
@@ -30,7 +30,6 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
   const id = uuid();
   // Format the current date in the desired format
   const formattedDate = currentDate.format('YYYY-MM-DD hh:mm:ss A');
-  console.log('viewInventory', viewInventory);
 
   const seniorItemComputation = (isSenior, newCartList) => {
     let total = 0;
@@ -123,6 +122,7 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
     },
     {
       title: 'Stock',
+      dataIndex: 'stockTotal',
       key: 'stockTotal',
       render: (_, record) => <p>{Number(record.stockTotal) - totalSold[record.id]}</p>,
     },
@@ -143,7 +143,7 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
             disabled={
               Number(record.stockTotal) - totalSold[record.id] <= 0 ||
               disabledButtons.includes(record.id) ||
-              Number(data[i]) > Number(record.stockTotal)
+              Number(data[i]) > Number(record.stockTotal) - totalSold[record.id]
             }
             onClick={() => handleAddList(record, data[i])}
           >
@@ -322,7 +322,7 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
       <Table
         style={{ width: '55%' }}
         columns={columns}
-        dataSource={products.map((product) => ({
+        dataSource={productsInventories.map((product) => ({
           ...product,
           key: `${product.id}-${Math.random()}`,
         }))}
