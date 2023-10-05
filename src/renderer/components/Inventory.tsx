@@ -73,6 +73,7 @@ function Inventory() {
           product_id: selectProduct.id,
           quantity: values.quantity,
           date: formattedDate,
+          sold: 0,
         });
         if (result.isInstanceOfRxDocument) {
           getInventoryProduct(selectProduct);

@@ -54,7 +54,11 @@ const ProductModal = ({
           <Input />
         </Form.Item>
 
-        <Form.Item label="Category" name="category">
+        <Form.Item
+          rules={[{ required: true, message: 'Please select Category' }]}
+          label="Category"
+          name="category"
+        >
           <Select>
             <Select.Option value="Branded">Branded</Select.Option>
             <Select.Option value="Generic">Generic</Select.Option>
@@ -82,7 +86,11 @@ const ProductModal = ({
         >
           <InputNumber style={{ width: '100%' }} maxLength={11} />
         </Form.Item>
-        <Form.Item label="Vat/Non-Vat" name="isVat">
+        <Form.Item
+          rules={[{ required: true, message: 'Please select Vat or Non-Vat!' }]}
+          label="Vat/Non-Vat"
+          name="isVat"
+        >
           <Select>
             <Select.Option value="Vat">Vat</Select.Option>
             <Select.Option value="Non-Vat">Non-Vat</Select.Option>

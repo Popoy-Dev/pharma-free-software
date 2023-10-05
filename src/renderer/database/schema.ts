@@ -71,11 +71,14 @@ const productInventorySchema = {
     quantity: {
       type: 'string',
     },
+    sold: {
+      type: 'number',
+    },
     date: {
       type: 'string',
     },
   },
-  required: ['id', 'product_id', 'quantity', 'date'],
+  required: ['id', 'product_id', 'quantity', 'sold', 'date'],
 };
 
 const customerOrderSchema = {

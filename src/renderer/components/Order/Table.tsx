@@ -143,8 +143,13 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
     // Update the cartList state with the updated list
     setCartList(updatedCartList);
   };
+
   const total = cartList
-    .reduce((acc, item) => acc + parseFloat(item.selling_price) * item.quantity, 0)
+    .reduce(
+      (acc, item) =>
+        acc + parseFloat(item.senior_selling_price || item.selling_price) * item.quantity,
+      0,
+    )
     .toFixed(2);
   const calculateItemProfit = (item) => {
     const manufacturePrice = parseFloat(item.manufacture_price);
@@ -240,6 +245,13 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
     setIsSenior(e.target.checked);
     seniorItemComputation(e.target.checked, cartList);
   };
+  const getInventory = async () => {
+    const resultInvet = await collections.inventory.find().exec();
+    if (resultInvet && resultInvet.length > 0) {
+      const inve = resultInvet.map((item) => item.toJSON());
+      console.log('gett inventory here', inve);
+    }
+  };
 
   const handleSaveOrder = async () => {
     if (cartList.length !== 0) {
@@ -256,8 +268,25 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
         openNotificationWithIcon('success');
         setCartList([]);
       }
+
+      cartList.forEach(async (element) => {
+        console.log('element', element);
+        const res = await collections.inventory
+          .findOne({ selector: { product_id: element.id } })
+          .exec();
+        if (res) {
+          await res.update({
+            $set: {
+              sold: Number(res.sold) + element.quantity,
+            },
+          });
+          getInventory();
+        }
+      });
     }
   };
+
+  console.log('cartList', cartList);
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
       {contextHolder}
