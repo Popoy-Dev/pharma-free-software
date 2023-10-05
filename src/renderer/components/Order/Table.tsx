@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Card, InputNumber, Space, Table, Checkbox, notification } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
@@ -7,6 +7,7 @@ import { v4 as uuid } from 'uuid';
 import collections from '../../database/db';
 
 interface DataType {
+  product_id: any;
   quantity: number;
   selling_price: any;
   senior_selling_price: number;
@@ -22,6 +23,7 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
   const [focusedInput, setFocusedInput] = useState(null);
   const [isSeniorGlobalValue, setIsSenior] = useState(false);
   const [disabledButtons, setDisabledButtons] = useState<any>([]);
+  const [totalSold, setTotalSold] = useState<any>([]);
   const [api, contextHolder] = notification.useNotification();
   // Create a Moment.js object for the current date
   const currentDate = moment();
@@ -121,8 +123,8 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
     },
     {
       title: 'Stock',
-      dataIndex: 'stockTotal',
       key: 'stockTotal',
+      render: (_, record) => <p>{Number(record.stockTotal) - totalSold[record.id]}</p>,
     },
     {
       title: 'Action',
@@ -132,13 +134,17 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
           <InputNumber
             key={i} // Add a unique key
             onChange={(event) => handleInputChange(event, i)}
-            disabled={Number(record.stockTotal) === 0}
+            disabled={Number(record.stockTotal) - totalSold[record.id] <= 0}
             value={data[i] || 0}
             autoFocus={focusedInput === i} // Autofocus based on focusedInput state
           />
           <Button
             type="primary"
-            disabled={disabledButtons.includes(record.id)}
+            disabled={
+              Number(record.stockTotal) - totalSold[record.id] <= 0 ||
+              disabledButtons.includes(record.id) ||
+              Number(data[i]) > Number(record.stockTotal)
+            }
             onClick={() => handleAddList(record, data[i])}
           >
             Add
@@ -250,12 +256,32 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
     seniorItemComputation(e.target.checked, cartList);
   };
   const getInventory = async () => {
-    const resultInvet = await collections.inventory.find().exec();
-    if (resultInvet && resultInvet.length > 0) {
-      const inve = resultInvet.map((item) => item.toJSON());
-      console.log('inve', inve); // i check the inventory here
+    const resultInventory = await collections.inventory.find().exec();
+    if (resultInventory && resultInventory.length > 0) {
+      const dataInventory = resultInventory.map((item) => item.toJSON());
+
+      // eslint-disable-next-line camelcase
+      const computedTotalSold = dataInventory?.reduce((acc, { product_id, sold }) => {
+        // Ensure 'sold' is a numeric value
+        // eslint-disable-next-line no-param-reassign
+        sold = parseFloat(sold) || 0;
+
+        // eslint-disable-next-line camelcase
+        if (!acc[product_id]) {
+          // eslint-disable-next-line camelcase
+          acc[product_id] = 0;
+        }
+        // eslint-disable-next-line camelcase
+        acc[product_id] += sold;
+
+        return acc;
+      }, {}); // Initialize acc as an empty object
+      setTotalSold(computedTotalSold);
     }
   };
+  useEffect(() => {
+    getInventory();
+  }, []);
 
   const handleSaveOrder = async () => {
     if (cartList.length !== 0) {
@@ -271,6 +297,7 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
       if (result.isInstanceOfRxDocument) {
         openNotificationWithIcon('success');
         setCartList([]);
+        setDisabledButtons([]);
       }
 
       cartList.forEach(async (element) => {
