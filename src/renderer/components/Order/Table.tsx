@@ -21,6 +21,7 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
   const [data, setData] = useState([]); // Your data here
   const [focusedInput, setFocusedInput] = useState(null);
   const [isSeniorGlobalValue, setIsSenior] = useState(false);
+  const [disabledButtons, setDisabledButtons] = useState<any>([]);
   const [api, contextHolder] = notification.useNotification();
   // Create a Moment.js object for the current date
   const currentDate = moment();
@@ -28,7 +29,6 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
   // Format the current date in the desired format
   const formattedDate = currentDate.format('YYYY-MM-DD hh:mm:ss A');
   console.log('viewInventory', viewInventory);
-  console.log('cartList', cartList);
 
   const seniorItemComputation = (isSenior, newCartList) => {
     let total = 0;
@@ -62,7 +62,6 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
 
       // Now, updatedCartList contains the updated prices
     } else {
-      console.log('elsee');
       // Recompute prices without the discount when isSenior is false
       const updatedCartList = newCartList.map((list) => {
         if (list.isVat === 'Vat') {
@@ -82,6 +81,7 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
   };
 
   const handleAddList = (record, quantity) => {
+    setDisabledButtons([...disabledButtons, record.id]);
     const dataList = {
       ...record,
       quantity,
@@ -89,6 +89,17 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
 
     const newCartList = [...cartList, dataList];
     seniorItemComputation(isSeniorGlobalValue, newCartList);
+  };
+
+  const handleRemoveItem = (itemToRemove) => {
+    // Use filter to create a new cartList without the item to be removed
+    const updatedCartList = cartList.filter((item) => item.key !== itemToRemove.key);
+
+    const updateDisabledButtons = disabledButtons.filter((item) => item !== itemToRemove.id);
+    setDisabledButtons([...updateDisabledButtons]);
+
+    // Update the cartList state with the updated list
+    setCartList(updatedCartList);
   };
 
   const handleInputChange = (event: any, index: any) => {
@@ -127,7 +138,7 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
           />
           <Button
             type="primary"
-            disabled={Number(data[i]) > Number(record.stockTotal)}
+            disabled={disabledButtons.includes(record.id)}
             onClick={() => handleAddList(record, data[i])}
           >
             Add
@@ -136,13 +147,6 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
       ),
     },
   ];
-  const handleRemoveItem = (itemToRemove) => {
-    // Use filter to create a new cartList without the item to be removed
-    const updatedCartList = cartList.filter((item) => item.key !== itemToRemove.key);
-
-    // Update the cartList state with the updated list
-    setCartList(updatedCartList);
-  };
 
   const total = cartList
     .reduce(
@@ -249,7 +253,7 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
     const resultInvet = await collections.inventory.find().exec();
     if (resultInvet && resultInvet.length > 0) {
       const inve = resultInvet.map((item) => item.toJSON());
-      console.log('gett inventory here', inve);
+      console.log('inve', inve); // i check the inventory here
     }
   };
 
@@ -270,7 +274,6 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
       }
 
       cartList.forEach(async (element) => {
-        console.log('element', element);
         const res = await collections.inventory
           .findOne({ selector: { product_id: element.id } })
           .exec();
@@ -286,7 +289,6 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
     }
   };
 
-  console.log('cartList', cartList);
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
       {contextHolder}
