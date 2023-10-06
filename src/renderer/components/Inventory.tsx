@@ -63,10 +63,8 @@ function Inventory() {
           // Add the totalSold property to the element
           return { ...element, totalSold, totalStock: totalStock - totalSold };
         }
-        // If no matching items found, set totalSold to 0 or any default value
-        element.totalSold = 0;
 
-        return element;
+        return { ...element, totalSold: 0, totalStock: 0 };
       });
 
       setProducts(updatedDataProduct);
