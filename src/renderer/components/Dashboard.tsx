@@ -3,6 +3,8 @@ import { DateRangePicker } from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import { Button, Modal } from 'antd';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import moment from 'moment';
 import collections from '../database/db';
 
 const Dashboard = () => {
@@ -12,6 +14,7 @@ const Dashboard = () => {
   const [selectedStartDate, setSelectedStartDate] = useState<Date>(new Date());
   const [selectedEndDate, setSelectedEndDate] = useState<Date>(new Date());
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [totalRangeAmoutbyDate, setTotalRangeDateAmount] = useState<any>([]);
 
   const dashboardData = async () => {
     let inventoryData;
@@ -85,7 +88,9 @@ const Dashboard = () => {
     const start = new Date(startDate.getTime() - startDate.getTimezoneOffset() * 60000)
       .toISOString()
       .substr(0, 10);
-    const end = new Date(endDate.getTime() - endDate.getTimezoneOffset() * 60000)
+    const end = new Date(
+      endDate.getTime() - endDate.getTimezoneOffset() * 60000 + 24 * 60 * 60 * 1000,
+    )
       .toISOString()
       .substr(0, 10);
 
@@ -97,35 +102,39 @@ const Dashboard = () => {
             $lte: end,
           },
         },
-        sort: [{ 'data.created_at': 'desc' }],
+        sort: [{ 'date.created_at': 'desc' }],
       })
       .exec();
 
-    console.log('fetchOrderByDate', fetchOrderByDate);
-    // let dataArray: any = []
-    // fetchOrderByDate.forEach((element: any) => {
-    //   const newArray = {
-    //     Date: element.created_at,
-    //     scales: element.order_totals_details.totalAmount,
-    //   }
-    //   dataArray.push(newArray)
-    // })
-    // let lineGraphData = dataArray.reduce((acc: any, obj: any) => {
-    //   let Date = obj.Date
-    //   let scales = obj.scales
+    let dateRangeData;
+    if (fetchOrderByDate && fetchOrderByDate.length > 0) {
+      dateRangeData = fetchOrderByDate.map((item) => item.toJSON());
+    }
+    const dataArray: any = [];
+    const dateScalesMap = {};
+    dateRangeData?.forEach((element: any) => {
+      const newArray = {
+        Date: moment(element.date, 'YYYY-MM-DD hh:mm:ss A').format('MMMM DD YYYY'),
+        scales: Number(element.total),
+      };
+      dataArray.push(newArray);
+    });
 
-    //   let existingTransactionDate = acc.find((ac: any) => ac.Date === Date)
+    dataArray?.forEach((element) => {
+      const { Date, scales } = element;
+      if (dateScalesMap[Date]) {
+        dateScalesMap[Date] += scales;
+      } else {
+        dateScalesMap[Date] = scales;
+      }
+    });
 
-    //   if (existingTransactionDate) {
-    //     existingTransactionDate.scales += scales
-    //   } else {
-    //     acc.push({ Date, scales })
-    //   }
+    const result = Object.keys(dateScalesMap).map((Date) => ({
+      Date,
+      scales: dateScalesMap[Date].toFixed(2),
+    }));
 
-    //   return acc
-    // }, [])
-
-    // setTotalRangeDateAmount(lineGraphData)
+    setTotalRangeDateAmount(result);
     // setTotalAmount(
     //   data?.reduce(
     //     (acc: any, obj: any) => acc + obj.order_totals_details.totalAmount,
@@ -170,7 +179,7 @@ const Dashboard = () => {
         </Button>
         <Modal
           title="Date Range Selector"
-          visible={isModalVisible}
+          open={isModalVisible}
           onOk={handleOk}
           onCancel={handleCancel}
           width={600}
@@ -266,6 +275,26 @@ const Dashboard = () => {
             <h2 style={{ fontSize: '20px', margin: 0, color: '#1d91e3' }}>Investments</h2>
           </div>
         </div>
+      </div>
+      <div style={{ width: '100%', textAlign: 'center', marginTop: '60px', margin: 'auto' }}>
+        <AreaChart
+          width={1000}
+          height={400}
+          data={totalRangeAmoutbyDate}
+          margin={{
+            top: 10,
+            right: 30,
+            left: 0,
+            bottom: 0,
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="Date" />
+          <YAxis />
+          <Tooltip />
+          <Area type="monotone" dataKey="scales" stroke="#8884d8" fill="#8884d8" />
+        </AreaChart>
+        <h1 style={{ textAlign: 'center', color: '#4e9d5b' }}>Total Sales</h1>
       </div>
     </div>
   );
