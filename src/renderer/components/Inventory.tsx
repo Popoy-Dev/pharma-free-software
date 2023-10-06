@@ -42,11 +42,34 @@ function Inventory() {
   };
 
   const getProducts = async () => {
-    const result = await collections.products.find().exec();
-    if (result && result.length > 0) {
-      const data = result.map((item) => item.toJSON());
+    let dataFetchInventory;
+    let dataProduct: any;
 
-      setProducts(data);
+    const resultInventoriesFetch = await collections.inventory.find().exec();
+    if (resultInventoriesFetch && resultInventoriesFetch.length > 0) {
+      dataFetchInventory = resultInventoriesFetch.map((item) => item.toJSON());
+    }
+
+    const resultProduct = await collections.products.find().exec();
+    if (resultProduct && resultProduct.length > 0) {
+      dataProduct = resultProduct.map((item) => item.toJSON());
+
+      const updatedDataProduct = dataProduct.map((element) => {
+        const matchResult = dataFetchInventory.filter((item) => element.id === item.product_id);
+        if (matchResult.length > 0) {
+          // Calculate the total sold quantity for all matching items
+          const totalSold = matchResult.reduce((sum, item) => sum + item.sold, 0);
+          const totalStock = matchResult.reduce((sum, item) => sum + item.quantity, 0);
+          // Add the totalSold property to the element
+          return { ...element, totalSold, totalStock: totalStock - totalSold };
+        }
+        // If no matching items found, set totalSold to 0 or any default value
+        element.totalSold = 0;
+
+        return element;
+      });
+
+      setProducts(updatedDataProduct);
     } else {
       setProducts([]);
     }

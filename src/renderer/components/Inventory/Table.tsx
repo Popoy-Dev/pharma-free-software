@@ -16,6 +16,16 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
       key: 'id',
     },
     {
+      title: 'Stock',
+      dataIndex: 'totalStock',
+      key: 'id',
+    },
+    {
+      title: 'Sold',
+      dataIndex: 'totalSold',
+      key: 'id',
+    },
+    {
       title: 'Action',
       key: 'product.id',
       render: (_, record) => (
