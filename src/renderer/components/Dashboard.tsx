@@ -63,14 +63,56 @@ const Dashboard = () => {
       setInvestment(totalInvestment);
     }
 
-    const orderResult = await collections.order.find().exec();
-    if (orderResult && orderResult.length > 0) {
-      const data = orderResult.map((item) => item.toJSON());
-      const totalSalesCompute = data.reduce(
+    const start = moment(selectedStartDate).format('YYYY-MM-DD');
+    const end = moment(selectedEndDate).format('YYYY-MM-DD');
+
+    if (start === end) {
+      const orderResult = await collections.order
+        .find({
+          selector: {
+            date: {
+              $gte: '2023-10-06 01:00:00 AM',
+              $lte: '2023-10-06 12:00:00 PM',
+            },
+          },
+        })
+        .exec();
+
+      if (orderResult && orderResult.length > 0) {
+        const data = orderResult.map((item) => item.toJSON());
+        const totalSalesCompute = data.reduce(
+          (accumulator, currentValue) => accumulator + Number(currentValue.total),
+          0,
+        );
+        const totalProfitCompute = data.reduce(
+          (accumulator, currentValue) => accumulator + Number(currentValue.totalProfit),
+          0,
+        );
+        setTotalSales(totalSalesCompute);
+        setTotalProfit(totalProfitCompute);
+      }
+    } else {
+      const fetchOrderByDate = await collections.order
+        .find({
+          selector: {
+            date: {
+              $gte: start,
+              $lte: end,
+            },
+          },
+          sort: [{ 'date.created_at': 'desc' }],
+        })
+        .exec();
+
+      let dateRangeData;
+      if (fetchOrderByDate && fetchOrderByDate.length > 0) {
+        dateRangeData = fetchOrderByDate.map((item) => item.toJSON());
+      }
+      const totalSalesCompute = dateRangeData.reduce(
         (accumulator, currentValue) => accumulator + Number(currentValue.total),
         0,
       );
-      const totalProfitCompute = data.reduce(
+      const totalProfitCompute = dateRangeData.reduce(
         (accumulator, currentValue) => accumulator + Number(currentValue.totalProfit),
         0,
       );
@@ -135,16 +177,14 @@ const Dashboard = () => {
     }));
 
     setTotalRangeDateAmount(result);
-    // setTotalAmount(
-    //   data?.reduce(
-    //     (acc: any, obj: any) => acc + obj.order_totals_details.totalAmount,
-    //     0
-    //   )
-    // )
   };
   useEffect(() => {
     dashboardData();
   }, []);
+
+  useEffect(() => {
+    dashboardData();
+  }, [selectedEndDate]);
   const selectionRange = {
     startDate: selectedStartDate,
     endDate: selectedEndDate,
@@ -294,7 +334,7 @@ const Dashboard = () => {
           <Tooltip />
           <Area type="monotone" dataKey="scales" stroke="#8884d8" fill="#8884d8" />
         </AreaChart>
-        <h1 style={{ textAlign: 'center', color: '#4e9d5b' }}>Total Sales</h1>
+        <h1 style={{ textAlign: 'center', color: '#4e9d5b' }}>Sales Chart</h1>
       </div>
     </div>
   );
