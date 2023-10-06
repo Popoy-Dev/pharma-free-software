@@ -97,7 +97,7 @@ const Dashboard = () => {
           selector: {
             date: {
               $gte: start,
-              $lte: end,
+              $lte: moment(selectedEndDate).add(1, 'days').format('YYYY-MM-DD'),
             },
           },
           sort: [{ 'date.created_at': 'desc' }],
