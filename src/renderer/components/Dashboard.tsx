@@ -6,31 +6,58 @@ import { Button, Modal } from 'antd';
 import collections from '../database/db';
 
 const Dashboard = () => {
-  const [cashFund, setCashFund] = useState(0);
   const [totalSales, setTotalSales] = useState(0);
   const [totalProfit, setTotalProfit] = useState(0);
+  const [investment, setInvestment] = useState(0);
   const [selectedStartDate, setSelectedStartDate] = useState<Date>(new Date());
   const [selectedEndDate, setSelectedEndDate] = useState<Date>(new Date());
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const currentDate = new Date();
-  const currentDateString = currentDate.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  });
+
   const dashboardData = async () => {
-    const result = await collections.cashfund
-      .find({
-        selector: {
-          date: {
-            $gte: `${currentDateString} 00:00:00 AM`,
-          },
-        },
-      })
-      .exec();
+    let inventoryData;
+    const result = await collections.products.find().exec();
+    const resultInventory = await collections.inventory.find().exec();
+    if (resultInventory && resultInventory.length > 0) {
+      inventoryData = resultInventory.map((item) => item.toJSON());
+    }
+
     if (result && result.length > 0) {
       const data = result.map((item) => item.toJSON());
-      setCashFund(data[0]?.cashfund);
+
+      const totalInvestmentByProduct = {};
+
+      // Assuming your inventoryData and product arrays are defined
+
+      inventoryData.forEach((item) => {
+        const productId = item.product_id;
+        const { quantity } = item;
+
+        // Find the corresponding product in the product array
+        const product = data.find((p) => p.id === productId);
+
+        if (product) {
+          const manufacturePrice = product.manufacture_price;
+
+          // Calculate the investment for the current item
+          const investmentCompute = quantity * manufacturePrice;
+
+          // Add the calculated investment to the total investment for the product
+          if (totalInvestmentByProduct[productId]) {
+            totalInvestmentByProduct[productId] += investmentCompute;
+          } else {
+            totalInvestmentByProduct[productId] = investmentCompute;
+          }
+        }
+      });
+      let totalInvestment = 0;
+
+      // Loop through the values in the totalInvestmentByProduct object and add them up
+      // eslint-disable-next-line no-restricted-syntax, guard-for-in
+      for (const productId in totalInvestmentByProduct) {
+        totalInvestment += totalInvestmentByProduct[productId];
+      }
+
+      setInvestment(totalInvestment);
     }
 
     const orderResult = await collections.order.find().exec();
@@ -46,10 +73,7 @@ const Dashboard = () => {
       );
       setTotalSales(totalSalesCompute);
       setTotalProfit(totalProfitCompute);
-
-      console.log('data', data);
     }
-    console.log('data');
   };
 
   const handleSelect = async (date: any) => {
@@ -140,6 +164,28 @@ const Dashboard = () => {
   );
   return (
     <div>
+      <div style={{ textAlign: 'right', marginBottom: '12px' }}>
+        <Button type="primary" onClick={showModal}>
+          Calendar
+        </Button>
+        <Modal
+          title="Date Range Selector"
+          visible={isModalVisible}
+          onOk={handleOk}
+          onCancel={handleCancel}
+          width={600}
+          footer={[
+            <Button key="back" onClick={handleCancel}>
+              Cancel
+            </Button>,
+            <Button key="submit" type="primary" onClick={handleOk}>
+              OK
+            </Button>,
+          ]}
+        >
+          {modalContent}
+        </Modal>
+      </div>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <div
           style={{
@@ -163,8 +209,8 @@ const Dashboard = () => {
               flexDirection: 'column',
             }}
           >
-            <h2 style={{ fontSize: '34px', margin: 0 }}>₱{cashFund.toFixed(2)}</h2>
-            <h2 style={{ fontSize: '20px', margin: 0, color: '#4cdf65' }}>Cashfund</h2>
+            <h2 style={{ fontSize: '34px', margin: 0 }}>₱{totalSales.toFixed(2)}</h2>
+            <h2 style={{ fontSize: '20px', margin: 0, color: '#4cdf65' }}>Total Sales</h2>
           </div>
         </div>
         <div
@@ -190,8 +236,8 @@ const Dashboard = () => {
               flexDirection: 'column',
             }}
           >
-            <h2 style={{ fontSize: '34px', margin: 0 }}>₱{totalSales.toFixed(2)}</h2>
-            <h2 style={{ fontSize: '20px', margin: 0, color: '#e9781c' }}>Total Sale</h2>
+            <h2 style={{ fontSize: '34px', margin: 0 }}>₱{totalProfit.toFixed(2)}</h2>
+            <h2 style={{ fontSize: '20px', margin: 0, color: '#e9781c' }}>Total Profits</h2>
           </div>
         </div>
         <div
@@ -216,32 +262,10 @@ const Dashboard = () => {
               flexDirection: 'column',
             }}
           >
-            <h2 style={{ fontSize: '34px', margin: 0 }}>₱{totalProfit.toFixed(2)}</h2>
-            <h2 style={{ fontSize: '20px', margin: 0, color: '#1d91e3' }}>Total Profit</h2>
+            <h2 style={{ fontSize: '34px', margin: 0 }}>₱{investment.toFixed(2)}</h2>
+            <h2 style={{ fontSize: '20px', margin: 0, color: '#1d91e3' }}>Investments</h2>
           </div>
         </div>
-      </div>
-      <div>
-        <Button type="primary" onClick={showModal}>
-          Open Modal
-        </Button>
-        <Modal
-          title="Date Range Selector"
-          visible={isModalVisible}
-          onOk={handleOk}
-          onCancel={handleCancel}
-          width={600}
-          footer={[
-            <Button key="back" onClick={handleCancel}>
-              Cancel
-            </Button>,
-            <Button key="submit" type="primary" onClick={handleOk}>
-              OK
-            </Button>,
-          ]}
-        >
-          {modalContent}
-        </Modal>
       </div>
     </div>
   );
