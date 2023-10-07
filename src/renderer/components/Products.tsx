@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Form, Input } from 'antd';
 import { v4 as uuid } from 'uuid';
 
+import { SearchOutlined } from '@ant-design/icons';
 import ProductModal from './Products/Modal';
 import ProductTable from './Products/Table';
 import collections from '../database/db';
@@ -142,6 +143,7 @@ function Products() {
         <h1>Products</h1>
         <Input
           onKeyUp={handleSearch}
+          prefix={<SearchOutlined />}
           placeholder="Search Product"
           style={{ width: '30%', textAlign: 'left', marginBottom: '12px' }}
         />

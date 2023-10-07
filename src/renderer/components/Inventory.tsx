@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Form, Input } from 'antd';
 import { v4 as uuid } from 'uuid';
 import moment from 'moment';
+import { SearchOutlined } from '@ant-design/icons';
 import ProductInventoryModal from './Inventory/Modal';
 import ProductInventoryTable from './Inventory/Table';
 import collections from '../database/db';
@@ -143,6 +144,7 @@ function Inventory() {
         <h1>Inventory</h1>
         <Input
           onKeyUp={handleSearch}
+          prefix={<SearchOutlined />}
           placeholder="Search Inventory"
           style={{ width: '30%', textAlign: 'left', marginBottom: '12px' }}
         />

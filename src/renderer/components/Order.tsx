@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import React, { useState, useEffect } from 'react';
-
+import { Input } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import OrderTable from './Order/Table';
 import collections from '../database/db';
 
@@ -8,6 +9,7 @@ function Order() {
   const [products, setProducts] = useState<any>([]);
   const [inventories, setInventories] = useState<any>([]);
   const [productsInventories, setProductsInvetories] = useState<any>([]);
+  const [productsSearch, setSearchProducts] = useState<any>([]);
 
   const getInventoryAndProducts = async () => {
     const inventoryResult = await collections.inventory.find().exec();
@@ -36,6 +38,7 @@ function Order() {
 
     if (order && order.length > 0) {
       setProductsInvetories(order);
+      setSearchProducts(order);
     } else {
       setProductsInvetories([]);
     }
@@ -47,12 +50,29 @@ function Order() {
   useEffect(() => {
     getInventoryAndProducts();
   }, []);
+  const handleSearch = async (e: any) => {
+    const result = productsInventories.filter((data) => {
+      if (!e.target.value) {
+        return products;
+      }
+      return data.product_name.toLocaleLowerCase().includes(e.target.value.toLowerCase());
+    });
 
+    setSearchProducts(result);
+  };
   return (
     <div>
-      <h1>Order</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h1>Order</h1>
+        <Input
+          onKeyUp={handleSearch}
+          prefix={<SearchOutlined />}
+          placeholder="Search Product"
+          style={{ width: '30%', textAlign: 'left', marginBottom: '12px' }}
+        />
+      </div>
       <div style={{ textAlign: 'right' }} />
-      <OrderTable productsInventories={productsInventories} />
+      <OrderTable productsInventories={productsSearch} />
     </div>
   );
 }

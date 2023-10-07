@@ -24,6 +24,7 @@ const ProductInventoryTable = ({ productsInventories }): any => {
   const [isSeniorGlobalValue, setIsSenior] = useState(false);
   const [disabledButtons, setDisabledButtons] = useState<any>([]);
   const [totalSold, setTotalSold] = useState<any>([]);
+  const [customerMoney, setCustomerMoney] = useState<any>(0);
   const [api, contextHolder] = notification.useNotification();
   // Create a Moment.js object for the current date
   const currentDate = moment();
@@ -316,6 +317,10 @@ const ProductInventoryTable = ({ productsInventories }): any => {
     }
   };
 
+  const handleCustomerMoney = (value) => {
+    setCustomerMoney(value);
+    setFocusedInput(null);
+  };
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
       {contextHolder}
@@ -357,9 +362,18 @@ const ProductInventoryTable = ({ productsInventories }): any => {
             <div>
               Total: {total}{' '}
               {cartList.length !== 0 && (
-                <Button type="primary" onClick={handleSaveOrder}>
-                  Buy
-                </Button>
+                <>
+                  <InputNumber
+                    min={1}
+                    defaultValue={0}
+                    onChange={(value) => handleCustomerMoney(value)}
+                    value={customerMoney}
+                    onBlur={(e) => e.preventDefault()} // Prevent focus from moving away
+                  />
+                  <Button type="primary" onClick={handleSaveOrder} disabled={total > customerMoney}>
+                    Buy
+                  </Button>
+                </>
               )}
               TotalProfit: {totalProfit}{' '}
             </div>
