@@ -1,8 +1,7 @@
 /* eslint-disable no-console */
 import React, { useState, useEffect } from 'react';
-import { Form } from 'antd';
+import { Form, Input } from 'antd';
 import { v4 as uuid } from 'uuid';
-
 import moment from 'moment';
 import ProductInventoryModal from './Inventory/Modal';
 import ProductInventoryTable from './Inventory/Table';
@@ -16,6 +15,7 @@ function Inventory() {
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [products, setProducts] = useState<any>([]);
+  const [productsSearch, setSearchProducts] = useState<any>([]);
   const [modalText, setModalText] = useState('Content of the modal');
 
   const [selectProduct, setSelectProduct] = useState<any>({});
@@ -68,6 +68,7 @@ function Inventory() {
       });
 
       setProducts(updatedDataProduct);
+      setSearchProducts(updatedDataProduct);
     } else {
       setProducts([]);
     }
@@ -126,9 +127,26 @@ function Inventory() {
     getInventoryProduct(product);
     setOpen(true);
   };
+  const handleSearch = async (e: any) => {
+    const result = products.filter((data) => {
+      if (!e.target.value) {
+        return products;
+      }
+      return data.product_name.toLocaleLowerCase().includes(e.target.value.toLowerCase());
+    });
+
+    setSearchProducts(result);
+  };
   return (
     <div>
-      <h1>Inventory</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h1>Inventory</h1>
+        <Input
+          onKeyUp={handleSearch}
+          placeholder="Search Inventory"
+          style={{ width: '30%', textAlign: 'left', marginBottom: '12px' }}
+        />
+      </div>
       <div style={{ textAlign: 'right' }}>
         <ProductInventoryModal
           title="Title"
@@ -144,7 +162,8 @@ function Inventory() {
           inventoryProducts={inventoryProducts}
         />
       </div>
-      <ProductInventoryTable products={products} viewInventory={viewInventory} />
+
+      <ProductInventoryTable products={productsSearch} viewInventory={viewInventory} />
     </div>
   );
 }

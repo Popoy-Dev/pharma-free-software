@@ -100,7 +100,7 @@ const Dashboard = () => {
               $lte: moment(selectedEndDate).add(1, 'days').format('YYYY-MM-DD'),
             },
           },
-          sort: [{ 'date.created_at': 'desc' }],
+          sort: [{ date: 'asc' }],
         })
         .exec();
 
@@ -144,7 +144,7 @@ const Dashboard = () => {
             $lte: end,
           },
         },
-        sort: [{ 'date.created_at': 'desc' }],
+        sort: [{ date: 'asc' }],
       })
       .exec();
 

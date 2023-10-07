@@ -45,6 +45,10 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
         ...product,
         key: product.id,
       }))}
+      pagination={{
+        defaultPageSize: 2,
+        total: products?.total,
+      }}
     />
   );
 };

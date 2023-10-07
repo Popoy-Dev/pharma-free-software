@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import React, { useState, useEffect } from 'react';
-import { Button, Form } from 'antd';
+import { Button, Form, Input } from 'antd';
 import { v4 as uuid } from 'uuid';
 
 import ProductModal from './Products/Modal';
@@ -15,6 +15,7 @@ function Products() {
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [products, setProducts] = useState<any>([]);
+  const [productsSearch, setSearchProducts] = useState<any>([]);
   const [deleteResult, setDeleteResult] = useState('');
   const [modalText, setModalText] = useState('Content of the modal');
 
@@ -51,6 +52,7 @@ function Products() {
       const data = result.map((item) => item.toJSON());
 
       setProducts(data);
+      setSearchProducts(data);
     } else {
       setProducts([]);
     }
@@ -123,10 +125,27 @@ function Products() {
     setOpen(true);
     setEditValue(list);
   };
+  const handleSearch = async (e: any) => {
+    const result = products.filter((data) => {
+      if (!e.target.value) {
+        return products;
+      }
+      return data.product_name.toLocaleLowerCase().includes(e.target.value.toLowerCase());
+    });
+
+    setSearchProducts(result);
+  };
 
   return (
     <div>
-      <h1>Products</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h1>Products</h1>
+        <Input
+          onKeyUp={handleSearch}
+          placeholder="Search Product"
+          style={{ width: '30%', textAlign: 'left', marginBottom: '12px' }}
+        />
+      </div>
       <div style={{ textAlign: 'right' }}>
         <Button type="primary" onClick={showModal} style={{ marginBottom: '12px' }}>
           add product
@@ -145,7 +164,7 @@ function Products() {
         />
       </div>
       <ProductTable
-        products={products}
+        products={productsSearch}
         handleDeleteResult={handleDeleteResult}
         editProduct={editProduct}
       />

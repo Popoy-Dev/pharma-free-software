@@ -326,6 +326,10 @@ const ProductInventoryTable = ({ productsInventories }): any => {
           ...product,
           key: `${product.id}-${Math.random()}`,
         }))}
+        pagination={{
+          defaultPageSize: 2,
+          total: productsInventories?.total,
+        }}
       />
       <Card
         title="Order list"
