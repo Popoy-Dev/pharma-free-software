@@ -30,9 +30,7 @@ function Project() {
   const showModal = () => {
     setOpen(true);
     form.setFieldsValue({
-      name: '',
-      location: '',
-      status: '',
+      cashfund: '',
     });
     setEditValue('');
   };
@@ -50,10 +48,13 @@ function Project() {
   };
 
   const getProjects = async () => {
-    const result = await collections.cashfund.find().exec();
+    const result = await collections.cashfund
+      .find({ sort: [{ date: 'desc' }] })
+
+      .exec();
+
     if (result && result.length > 0) {
       const data = result.map((item) => item.toJSON());
-
       setProjects(data);
     } else {
       setProjects([]);
@@ -71,9 +72,10 @@ function Project() {
           await existingDoc.update({
             id: editValue.id,
             cashfund: values.cashfund,
-            date: values.date,
+            date: formattedDate,
           });
           setOpen(false);
+          setCashToday(values.cashfund);
           getProjects();
         }
       } catch (error) {
@@ -105,6 +107,9 @@ function Project() {
   useEffect(() => {
     getProjects();
   }, [deleteResult]);
+  useEffect(() => {
+    getProjects();
+  }, []);
 
   useEffect(() => {
     // eslint-disable-next-line no-console
@@ -133,7 +138,7 @@ function Project() {
     } else {
       setCashToday('');
     }
-  });
+  }, [projects]);
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>

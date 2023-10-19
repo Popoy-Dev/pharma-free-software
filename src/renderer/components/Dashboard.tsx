@@ -71,8 +71,8 @@ const Dashboard = () => {
         .find({
           selector: {
             date: {
-              $gte: '2023-10-06 01:00:00 AM',
-              $lte: '2023-10-06 12:00:00 PM',
+              $gte: `${start} 01:00:00 AM`,
+              $lte: `${end} 12:00:00 PM`,
             },
           },
         })
@@ -173,7 +173,7 @@ const Dashboard = () => {
 
     const result = Object.keys(dateScalesMap).map((Date) => ({
       Date,
-      scales: dateScalesMap[Date].toFixed(2),
+      scales: Number(dateScalesMap[Date].toFixed(2)),
     }));
 
     setTotalRangeDateAmount(result);
@@ -316,7 +316,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-      <div style={{ width: '100%', textAlign: 'center', marginTop: '60px', margin: 'auto' }}>
+      <div style={{ width: '100%', textAlign: 'center', marginTop: '400px', margin: 'auto' }}>
         <AreaChart
           width={1000}
           height={400}

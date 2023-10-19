@@ -49,6 +49,8 @@ function Inventory() {
     const resultInventoriesFetch = await collections.inventory.find().exec();
     if (resultInventoriesFetch && resultInventoriesFetch.length > 0) {
       dataFetchInventory = resultInventoriesFetch.map((item) => item.toJSON());
+    } else {
+      dataFetchInventory = [];
     }
 
     const resultProduct = await collections.products.find().exec();
