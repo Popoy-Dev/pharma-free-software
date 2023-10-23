@@ -134,6 +134,7 @@ const ProductInventoryTable = ({ productsInventories }): any => {
       render: (_, record, i) => (
         <Space size="middle">
           <InputNumber
+            min={1}
             key={i} // Add a unique key
             onChange={(event) => handleInputChange(event, i)}
             disabled={Number(record.stockTotal) - totalSold[record.id] <= 0}
@@ -145,7 +146,8 @@ const ProductInventoryTable = ({ productsInventories }): any => {
             disabled={
               Number(record.stockTotal) - totalSold[record.id] <= 0 ||
               disabledButtons.includes(record.id) ||
-              Number(data[i]) > Number(record.stockTotal) - totalSold[record.id]
+              Number(data[i]) > Number(record.stockTotal) - totalSold[record.id] ||
+              !Number(data[i])
             }
             onClick={() => handleAddList(record, data[i])}
           >
@@ -297,6 +299,8 @@ const ProductInventoryTable = ({ productsInventories }): any => {
         totalProfit,
         total,
         date: formattedDate,
+        totalRegularPrice,
+        customerMoney,
       });
       // eslint-disable-next-line no-underscore-dangle
 
@@ -383,7 +387,6 @@ const ProductInventoryTable = ({ productsInventories }): any => {
                 <>
                   <InputNumber
                     min={1}
-                    defaultValue={0}
                     onChange={(value) => handleCustomerMoney(value)}
                     value={customerMoney}
                     onBlur={(e) => e.preventDefault()} // Prevent focus from moving away

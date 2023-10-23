@@ -6,6 +6,7 @@ import Employees from '../components/Employees';
 import Attendance from '../components/Attendance';
 import Products from '../components/Products';
 import Inventory from '../components/Inventory';
+import Reports from '../components/Reports';
 import Order from '../components/Order';
 import Dashboard from '../components/Dashboard';
 
@@ -21,6 +22,7 @@ const App: React.FC = () => {
     { icon: UserOutlined, label: 'Products' },
     { icon: UserOutlined, label: 'Inventory' },
     { icon: UserOutlined, label: 'Order' },
+    { icon: UserOutlined, label: 'Reports' },
     { icon: UserOutlined, label: 'Employees' },
     { icon: VideoCameraOutlined, label: 'Attendance' },
   ];
@@ -32,6 +34,7 @@ const App: React.FC = () => {
       Products: <Products />,
       Inventory: <Inventory />,
       Order: <Order />,
+      Reports: <Reports />,
       Employees: <Employees />,
       Attendance: <Attendance />,
     };
@@ -78,7 +81,7 @@ const App: React.FC = () => {
           </div>
         </Content>
         <Footer style={{ textAlign: 'center', position: 'fixed', bottom: 0 }}>
-          Primetop ©2023
+          BotikaTech ©2023
         </Footer>
       </Layout>
     </Layout>

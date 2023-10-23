@@ -99,6 +99,12 @@ const customerOrderSchema = {
     total: {
       type: 'string',
     },
+    customerMoney: {
+      type: 'string',
+    },
+    totalRegularPrice: {
+      type: 'string',
+    },
     date: {
       type: 'string',
     },
