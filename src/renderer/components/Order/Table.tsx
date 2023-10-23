@@ -4,6 +4,7 @@ import type { ColumnsType } from 'antd/es/table';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import moment from 'moment';
 import { v4 as uuid } from 'uuid';
+import axios from 'axios';
 import collections from '../../database/db';
 
 interface DataType {
@@ -162,6 +163,10 @@ const ProductInventoryTable = ({ productsInventories }): any => {
       0,
     )
     .toFixed(2);
+
+  const totalRegularPrice = cartList
+    .reduce((acc, item) => acc + parseFloat(item.selling_price) * item.quantity, 0)
+    .toFixed(2);
   const calculateItemProfit = (item) => {
     const manufacturePrice = parseFloat(item.manufacture_price);
     const sellingPrice = parseFloat(item.senior_selling_price || item.selling_price);
@@ -314,6 +319,19 @@ const ProductInventoryTable = ({ productsInventories }): any => {
           getInventory();
         }
       });
+      axios
+        .post('http://localhost:3000/add', {
+          cartList,
+          customerMoney,
+          total,
+          totalRegularPrice,
+        })
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   };
 
