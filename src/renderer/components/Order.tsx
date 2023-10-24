@@ -13,7 +13,9 @@ function Order() {
 
   const getInventoryAndProducts = async () => {
     const inventoryResult = await collections.inventory.find().exec();
-    const productsResult = await collections.products.find().exec();
+    const productsResult = await collections.products
+      .find({ sort: [{ product_name: 'asc' }] })
+      .exec();
     setProducts(productsResult);
     setInventories(inventoryResult);
   };

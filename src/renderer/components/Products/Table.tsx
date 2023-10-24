@@ -44,10 +44,12 @@ const ProductTable = ({ products, handleDeleteResult, editProduct }): any => {
       title: 'Product Name',
       dataIndex: 'product_name',
       key: 'id',
+      sorter: (a, b) => a.product_name.localeCompare(b.product_name),
     },
     {
       title: 'Category',
       dataIndex: 'category',
+      sorter: (a, b) => a.category.localeCompare(b.category),
     },
     {
       title: 'Indication',
@@ -56,10 +58,12 @@ const ProductTable = ({ products, handleDeleteResult, editProduct }): any => {
     {
       title: 'Manufacture price',
       dataIndex: 'manufacture_price',
+      sorter: (a, b) => a.manufacture_price - b.manufacture_price,
     },
     {
       title: 'Selling price',
       dataIndex: 'selling_price',
+      sorter: (a, b) => a.selling_price - b.selling_price,
     },
     {
       title: 'isVat',

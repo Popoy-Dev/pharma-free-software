@@ -29,6 +29,11 @@ function Reports() {
       title: 'Date and Time',
       key: 'date',
       render: (_, record) => <p>{moment(record.date).format('MMMM DD YYYY, h:mm:ss a')}</p>,
+      sorter: (a, b) => {
+        const dateA = moment(a.date);
+        const dateB = moment(b.date);
+        return dateA.isBefore(dateB) ? -1 : dateA.isAfter(dateB) ? 1 : 0;
+      },
     },
     {
       title: 'View Order',

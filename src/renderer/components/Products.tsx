@@ -48,7 +48,11 @@ function Products() {
   };
 
   const getProducts = async () => {
-    const result = await collections.products.find().exec();
+    const result = await collections.products
+      .find({
+        sort: [{ product_name: 'asc' }],
+      })
+      .exec();
     if (result && result.length > 0) {
       const data = result.map((item) => item.toJSON());
 

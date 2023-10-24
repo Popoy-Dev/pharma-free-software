@@ -53,7 +53,9 @@ function Inventory() {
       dataFetchInventory = [];
     }
 
-    const resultProduct = await collections.products.find().exec();
+    const resultProduct = await collections.products
+      .find({ sort: [{ product_name: 'asc' }] })
+      .exec();
     if (resultProduct && resultProduct.length > 0) {
       dataProduct = resultProduct.map((item) => item.toJSON());
 
@@ -147,7 +149,7 @@ function Inventory() {
         <Input
           onKeyUp={handleSearch}
           prefix={<SearchOutlined />}
-          placeholder="Search Inventory"
+          placeholder="Product name"
           style={{ width: '30%', textAlign: 'left', marginBottom: '12px' }}
         />
       </div>

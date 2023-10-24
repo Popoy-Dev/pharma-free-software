@@ -116,17 +116,20 @@ const ProductInventoryTable = ({ productsInventories }): any => {
       title: 'Product Name',
       dataIndex: 'product_name',
       key: 'product_name',
+      sorter: (a, b) => a.product_name.localeCompare(b.product_name),
     },
     {
       title: 'Price',
       dataIndex: 'selling_price',
       key: 'selling_price',
+      sorter: (a, b) => a.selling_price - b.selling_price,
     },
     {
       title: 'Stock',
       dataIndex: 'stockTotal',
       key: 'stockTotal',
       render: (_, record) => <p>{Number(record.stockTotal) - totalSold[record.id]}</p>,
+      sorter: (a, b) => Number(a.stockTotal) - Number(b.stockTotal),
     },
     {
       title: 'Action',
@@ -137,7 +140,10 @@ const ProductInventoryTable = ({ productsInventories }): any => {
             min={1}
             key={i} // Add a unique key
             onChange={(event) => handleInputChange(event, i)}
-            disabled={Number(record.stockTotal) - totalSold[record.id] <= 0}
+            disabled={
+              Number(record.stockTotal) - totalSold[record.id] <= 0 ||
+              Number(record.stockTotal) === 0
+            }
             value={data[i] || 0}
             autoFocus={focusedInput === i} // Autofocus based on focusedInput state
           />
