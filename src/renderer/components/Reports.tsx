@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import type { DatePickerProps } from 'antd';
-import { Button, DatePicker, Table, Modal } from 'antd';
+import { Button, DatePicker, Table, Modal, Row, Col } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import moment from 'moment';
+import axios from 'axios';
 import collections from '../database/db';
 
 interface DataType {
@@ -141,6 +142,26 @@ function Reports() {
       pagination={false}
     />
   );
+
+  const handleReprint = async () => {
+    const { order, customerMoney, total, totalRegularPrice } = viewOrderData;
+    const cartList = order;
+    const reprint = true;
+    await axios
+      .post('http://localhost:3000/add', {
+        cartList,
+        customerMoney,
+        total,
+        totalRegularPrice,
+        reprint,
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -157,6 +178,7 @@ function Reports() {
           open={isModalOpen}
           onOk={handleOk}
           onCancel={handleCancel}
+          footer={null}
         >
           {itemListTable}
           <div>
@@ -169,24 +191,36 @@ function Reports() {
               }}
             >
               <div style={{ alignItems: 'flex-start' }}>
-                <p style={{ margin: 0 }}>
+                <p style={{ margin: 4 }}>
                   Discount:{'    '}
                   {viewOrderData.totalRegularPrice === viewOrderData.total
                     ? Number(0).toFixed(2)
                     : Number(viewOrderData.totalRegularPrice - viewOrderData.total).toFixed(2)}
                 </p>
 
-                <p style={{ margin: 0 }}>
+                <p style={{ margin: 4 }}>
                   Customer Money:{'    '}
                   {Number(viewOrderData.customerMoney).toFixed(2) || Number(0).toFixed(2)}
                 </p>
 
-                <p style={{ fontWeight: 'bold', margin: 0 }}>
+                <p style={{ fontWeight: 'bold', margin: 4 }}>
                   Total Amount:{'    '} {viewOrderData.total}
                 </p>
               </div>
             </div>
           </div>
+          <Row justify="space-between" style={{ marginTop: '24px' }}>
+            <Col>
+              <Button type="default" onClick={handleCancel}>
+                Cancel
+              </Button>
+            </Col>
+            <Col>
+              <Button type="primary" htmlType="submit" onClick={handleReprint}>
+                Submit
+              </Button>
+            </Col>
+          </Row>
         </Modal>
       </div>
     </div>
