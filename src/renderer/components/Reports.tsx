@@ -27,8 +27,8 @@ function Reports() {
   const orderListColumns: ColumnsType<any> = [
     {
       title: 'Date and Time',
-      dataIndex: 'date',
       key: 'date',
+      render: (_, record) => <p>{moment(record.date).format('MMMM DD YYYY, h:mm:ss a')}</p>,
     },
     {
       title: 'View Order',
