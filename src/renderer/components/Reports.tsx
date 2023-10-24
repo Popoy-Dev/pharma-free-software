@@ -152,7 +152,12 @@ function Reports() {
       </div>
       {orderListTable}
       <div style={{ width: '75%', margin: 'auto', marginTop: '36px' }}>
-        <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+        <Modal
+          title={moment(viewOrderData.date).format('MMMM DD YYYY, h:mm:ss a')}
+          open={isModalOpen}
+          onOk={handleOk}
+          onCancel={handleCancel}
+        >
           {itemListTable}
           <div>
             <div
