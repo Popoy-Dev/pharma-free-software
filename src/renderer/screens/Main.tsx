@@ -7,6 +7,7 @@ import Attendance from '../components/Attendance';
 import Products from '../components/Products';
 import Inventory from '../components/Inventory';
 import Reports from '../components/Reports';
+import Settings from '../components/Settings';
 import Order from '../components/Order';
 import Dashboard from '../components/Dashboard';
 
@@ -23,6 +24,7 @@ const App: React.FC = () => {
     { icon: UserOutlined, label: 'Inventory' },
     { icon: UserOutlined, label: 'Order' },
     { icon: UserOutlined, label: 'Reports' },
+    { icon: UserOutlined, label: 'Settings' },
     { icon: UserOutlined, label: 'Employees' },
     { icon: VideoCameraOutlined, label: 'Attendance' },
   ];
@@ -35,6 +37,7 @@ const App: React.FC = () => {
       Inventory: <Inventory />,
       Order: <Order />,
       Reports: <Reports />,
+      Settings: <Settings />,
       Employees: <Employees />,
       Attendance: <Attendance />,
     };

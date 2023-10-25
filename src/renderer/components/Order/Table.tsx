@@ -353,7 +353,7 @@ const ProductInventoryTable = ({ productsInventories }): any => {
     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
       {contextHolder}
       <Table
-        style={{ width: '55%' }}
+        style={{ width: '53%' }}
         columns={columns}
         dataSource={productsInventories.map((product) => ({
           ...product,
@@ -373,6 +373,7 @@ const ProductInventoryTable = ({ productsInventories }): any => {
           marginLeft: '12px',
           boxShadow: '5px 5px 5px 10px #888888',
           overflowY: 'auto',
+          top: '-90px',
         }}
       >
         <div style={{ marginBottom: '24px' }}>

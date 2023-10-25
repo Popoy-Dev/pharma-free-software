@@ -64,13 +64,20 @@ function Order() {
   };
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          width: '53%',
+        }}
+      >
         <h1>Order</h1>
         <Input
           onKeyUp={handleSearch}
           prefix={<SearchOutlined />}
           placeholder="Search Product"
-          style={{ width: '30%', textAlign: 'left', marginBottom: '12px' }}
+          style={{ width: '50%', textAlign: 'left', marginBottom: '12px', height: '40px' }}
         />
       </div>
       <div style={{ textAlign: 'right' }} />
