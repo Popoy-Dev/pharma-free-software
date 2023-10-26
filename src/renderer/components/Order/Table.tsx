@@ -342,6 +342,7 @@ const ProductInventoryTable = ({ productsInventories }): any => {
         .catch((error) => {
           console.log(error);
         });
+      setIsSenior(false);
     }
   };
 
@@ -366,7 +367,11 @@ const ProductInventoryTable = ({ productsInventories }): any => {
       />
       <Card
         title="Order list"
-        extra={<Checkbox onChange={handleSenior}>Senior </Checkbox>}
+        extra={
+          <Checkbox onChange={handleSenior} checked={isSeniorGlobalValue}>
+            Senior{' '}
+          </Checkbox>
+        }
         bordered={false}
         style={{
           width: '45%',
