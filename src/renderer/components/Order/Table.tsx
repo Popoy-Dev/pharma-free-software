@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card, InputNumber, Space, Table, Checkbox, notification } from 'antd';
+import { Button, Card, InputNumber, Space, Table, Checkbox, notification, Alert } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import moment from 'moment';
@@ -26,6 +26,10 @@ const ProductInventoryTable = ({ productsInventories }): any => {
   const [disabledButtons, setDisabledButtons] = useState<any>([]);
   const [totalSold, setTotalSold] = useState<any>([]);
   const [customerMoney, setCustomerMoney] = useState<any>(0);
+  const [ownerId, setOwnerId] = useState<any>(null);
+  const [receiptDetails, setReceiptDetails] = useState<any>({});
+  const [receiptWarningMessage, setReceiptWarningMessage] = useState('');
+
   const [api, contextHolder] = notification.useNotification();
   // Create a Moment.js object for the current date
   const currentDate = moment();
@@ -33,6 +37,26 @@ const ProductInventoryTable = ({ productsInventories }): any => {
   // Format the current date in the desired format
   const formattedDate = currentDate.format('YYYY-MM-DD hh:mm:ss A');
 
+  useEffect(() => {
+    const value: any = localStorage.getItem('user');
+
+    if (value) {
+      const parseData = JSON.parse(value);
+      setOwnerId(parseData.ownerId);
+
+      const shopDetails = {
+        pharmacy: parseData.pharmacy_name,
+        address: parseData.address,
+        cashierName: parseData.cashier_name,
+      };
+
+      setReceiptDetails(shopDetails);
+    } else {
+      // Handle the case when 'user' data is not found in localStorage.
+      // You can set default values or show an error message here.
+      setReceiptWarningMessage('Please set up receipt details in the Settings page.');
+    }
+  }, []);
   const seniorItemComputation = (isSenior, newCartList) => {
     let total = 0;
     let seniorDiscount = 0;
@@ -88,6 +112,7 @@ const ProductInventoryTable = ({ productsInventories }): any => {
     const dataList = {
       ...record,
       quantity,
+      ownerId,
     };
 
     const newCartList = [...cartList, dataList];
@@ -335,6 +360,7 @@ const ProductInventoryTable = ({ productsInventories }): any => {
           customerMoney,
           total,
           totalRegularPrice,
+          receiptDetails,
         })
         .then((response) => {
           console.log(response);
@@ -353,6 +379,9 @@ const ProductInventoryTable = ({ productsInventories }): any => {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
       {contextHolder}
+      {receiptWarningMessage && (
+        <Alert message="Warning" description={receiptWarningMessage} type="warning" showIcon />
+      )}
       <Table
         style={{ width: '53%' }}
         columns={columns}

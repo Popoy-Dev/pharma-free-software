@@ -1,11 +1,13 @@
-import { Breadcrumb, Button, Form, Input, Spin } from 'antd';
+import { Breadcrumb, Button, Form, Input, notification } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { HomeOutlined, UserOutlined } from '@ant-design/icons';
 
 function Settings() {
   const [isSetting, setIsSetting] = useState(true);
   const [isActivation, setIsActivation] = useState(false);
+  const [isNewSetup, seIsNewSetup] = useState(false);
   const [pharmacyInfo, setPharmacyInfo] = useState<any>('');
+  const [api, contextHolder] = notification.useNotification();
 
   type FieldType = {
     cashier_name?: string;
@@ -15,6 +17,13 @@ function Settings() {
     cell_no?: string;
   };
   const [form] = Form.useForm();
+  const openNotificationWithIcon = (type: any) => {
+    api[type]({
+      message: 'Success!',
+      description: 'Receipt details have been saved successfully.',
+    });
+  };
+
   const onFinish = (values: any) => {
     let ownerId: any = Math.floor(Math.random() * 10000);
     // eslint-disable-next-line no-unused-expressions
@@ -25,17 +34,20 @@ function Settings() {
     };
 
     localStorage.setItem('user', JSON.stringify(combinedValue));
+    openNotificationWithIcon('success');
   };
 
   useEffect(() => {
     const value: any = localStorage.getItem('user');
-    const parseData = JSON.parse(value);
-    setPharmacyInfo(parseData);
-
-    if (parseData) {
-      // Set initial form values and disable the form fields
-      form.setFieldsValue({ ...parseData });
-      // setIsFormDisabled(true);
+    seIsNewSetup(true);
+    if (value) {
+      const parseData = JSON.parse(value);
+      setPharmacyInfo(parseData);
+      if (parseData) {
+        // Set initial form values and disable the form fields
+        form.setFieldsValue({ ...parseData });
+        // setIsFormDisabled(true);
+      }
     }
   }, []);
 
@@ -77,9 +89,7 @@ function Settings() {
     // eslint-disable-next-line no-unused-expressions
     isSetting ? (
       <div>
-        {!pharmacyInfo ? (
-          <Spin />
-        ) : (
+        {isNewSetup && (
           <div style={{ width: '50%', margin: 'auto', marginTop: '36px' }}>
             <h3 style={{ textAlign: 'left' }}>Fill up for receipt details</h3>
             <Form
@@ -151,6 +161,7 @@ function Settings() {
 
   return (
     <div>
+      {contextHolder}
       <div> {breadCrumbTabs()}</div>
       <div>{settingsComponent()}</div>
       <div>{activationComponent()}</div>
