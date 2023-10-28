@@ -88,8 +88,8 @@ const Dashboard = () => {
           (accumulator, currentValue) => accumulator + Number(currentValue.totalProfit),
           0,
         );
-        setTotalSales(totalSalesCompute);
-        setTotalProfit(totalProfitCompute);
+        setTotalSales(totalSalesCompute || 0);
+        setTotalProfit(totalProfitCompute || 0);
       }
     } else {
       const fetchOrderByDate = await collections.order
@@ -116,8 +116,8 @@ const Dashboard = () => {
         (accumulator, currentValue) => accumulator + Number(currentValue.totalProfit),
         0,
       );
-      setTotalSales(totalSalesCompute);
-      setTotalProfit(totalProfitCompute);
+      setTotalSales(totalSalesCompute || 0);
+      setTotalProfit(totalProfitCompute || 0);
     }
   };
 
