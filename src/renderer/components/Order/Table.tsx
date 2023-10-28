@@ -361,6 +361,7 @@ const ProductInventoryTable = ({ productsInventories }): any => {
           total,
           totalRegularPrice,
           receiptDetails,
+          id,
         })
         .then((response) => {
           console.log(response);
