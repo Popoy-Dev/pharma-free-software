@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { DatePickerProps } from 'antd';
-import { Button, DatePicker, Table, Modal, Row, Col } from 'antd';
+import { Button, DatePicker, Table, Modal, Row, Col, Popconfirm, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import moment from 'moment';
 import axios from 'axios';
@@ -20,9 +20,29 @@ interface DataType {
 function Reports() {
   const [ordedData, setOrderData] = useState<any>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isVoid, setIsVoid] = useState(false);
   const [viewOrderData, setViewOrderData] = useState<any>([]);
-  const viewOrder = (record) => {
+  const [receiptDetails, setReceiptDetails] = useState<any>({});
+  useEffect(() => {
+    const value: any = localStorage.getItem('user');
+
+    if (value) {
+      const parseData = JSON.parse(value);
+
+      const shopDetails = {
+        pharmacy: parseData.pharmacy_name,
+        address: parseData.address,
+        cashierName: parseData.cashier_name,
+      };
+
+      setReceiptDetails(shopDetails);
+    } else {
+      console.log('Please set up receipt details in the Settings page.');
+    }
+  }, []);
+  const viewOrder = (record, isVoidValue) => {
     setIsModalOpen(true);
+    setIsVoid(isVoidValue);
     setViewOrderData(record);
   };
   const orderListColumns: ColumnsType<any> = [
@@ -40,10 +60,22 @@ function Reports() {
       title: 'View Order',
       key: 'key', // Define a unique key for the column
       render: (_, record) => (
-        <Button type="primary" onClick={() => viewOrder(record)}>
+        <Button type="primary" onClick={() => viewOrder(record, false)}>
           View
         </Button>
       ),
+    },
+    {
+      title: 'Void',
+      key: 'key', // Define a unique key for the column
+      render: (_, record) => {
+        const orderId = record.id.substring(record.id.length - 7);
+        return (
+          <Button danger onClick={() => viewOrder(record, true)}>
+            {orderId}
+          </Button>
+        );
+      },
     },
   ];
 
@@ -144,7 +176,7 @@ function Reports() {
   );
 
   const handleReprint = async () => {
-    const { order, customerMoney, total, totalRegularPrice } = viewOrderData;
+    const { order, customerMoney, total, totalRegularPrice, id } = viewOrderData;
     const cartList = order;
     const reprint = true;
     await axios
@@ -154,6 +186,8 @@ function Reports() {
         total,
         totalRegularPrice,
         reprint,
+        receiptDetails,
+        id,
       })
       .then((response) => {
         console.log(response);
@@ -161,6 +195,16 @@ function Reports() {
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  const confirm: any = (e: React.MouseEvent<HTMLElement>) => {
+    console.log(e);
+    message.success('Click on Yes');
+  };
+
+  const cancel: any = (e: React.MouseEvent<HTMLElement>) => {
+    console.log(e);
+    message.error('Click on No');
   };
   return (
     <div>
@@ -216,9 +260,24 @@ function Reports() {
               </Button>
             </Col>
             <Col>
-              <Button type="primary" htmlType="submit" onClick={handleReprint}>
-                Submit
-              </Button>
+              {isVoid ? (
+                <Popconfirm
+                  title="Void the order!"
+                  description="Are you sure to void this order?"
+                  onConfirm={confirm}
+                  onCancel={cancel}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <Button danger htmlType="submit">
+                    Void
+                  </Button>
+                </Popconfirm>
+              ) : (
+                <Button type="primary" htmlType="submit" onClick={handleReprint}>
+                  Submit
+                </Button>
+              )}
             </Col>
           </Row>
         </Modal>
