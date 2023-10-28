@@ -108,11 +108,11 @@ const Dashboard = () => {
       if (fetchOrderByDate && fetchOrderByDate.length > 0) {
         dateRangeData = fetchOrderByDate.map((item) => item.toJSON());
       }
-      const totalSalesCompute = dateRangeData.reduce(
+      const totalSalesCompute = dateRangeData?.reduce(
         (accumulator, currentValue) => accumulator + Number(currentValue.total),
         0,
       );
-      const totalProfitCompute = dateRangeData.reduce(
+      const totalProfitCompute = dateRangeData?.reduce(
         (accumulator, currentValue) => accumulator + Number(currentValue.totalProfit),
         0,
       );
@@ -173,7 +173,7 @@ const Dashboard = () => {
 
     const result = Object.keys(dateScalesMap).map((Date) => ({
       Date,
-      scales: Number(dateScalesMap[Date].toFixed(2)),
+      scales: Number(dateScalesMap[Date]?.toFixed(2)),
     }));
 
     setTotalRangeDateAmount(result);
@@ -258,7 +258,7 @@ const Dashboard = () => {
               flexDirection: 'column',
             }}
           >
-            <h2 style={{ fontSize: '34px', margin: 0 }}>₱{totalSales.toFixed(2)}</h2>
+            <h2 style={{ fontSize: '34px', margin: 0 }}>₱{totalSales && totalSales.toFixed(2)}</h2>
             <h2 style={{ fontSize: '20px', margin: 0, color: '#4cdf65' }}>Total Sales</h2>
           </div>
         </div>
@@ -285,7 +285,9 @@ const Dashboard = () => {
               flexDirection: 'column',
             }}
           >
-            <h2 style={{ fontSize: '34px', margin: 0 }}>₱{totalProfit.toFixed(2)}</h2>
+            <h2 style={{ fontSize: '34px', margin: 0 }}>
+              ₱{totalProfit && totalProfit.toFixed(2)}
+            </h2>
             <h2 style={{ fontSize: '20px', margin: 0, color: '#e9781c' }}>Total Profits</h2>
           </div>
         </div>
@@ -311,7 +313,7 @@ const Dashboard = () => {
               flexDirection: 'column',
             }}
           >
-            <h2 style={{ fontSize: '34px', margin: 0 }}>₱{investment.toFixed(2)}</h2>
+            <h2 style={{ fontSize: '34px', margin: 0 }}>₱{investment && investment.toFixed(2)}</h2>
             <h2 style={{ fontSize: '20px', margin: 0, color: '#1d91e3' }}>Investments</h2>
           </div>
         </div>
