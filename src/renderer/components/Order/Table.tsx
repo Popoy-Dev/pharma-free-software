@@ -153,7 +153,7 @@ const ProductInventoryTable = ({ productsInventories }): any => {
       title: 'Stock',
       dataIndex: 'stockTotal',
       key: 'stockTotal',
-      render: (_, record) => <p>{Number(record.stockTotal) - totalSold[record.id]}</p>,
+      render: (_, record) => <p>{String(Number(record.stockTotal || 0) - totalSold[record.id])}</p>,
       sorter: (a, b) => Number(a.stockTotal) - Number(b.stockTotal),
     },
     {

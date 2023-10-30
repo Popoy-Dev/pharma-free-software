@@ -23,6 +23,8 @@ function Reports() {
   const [isVoid, setIsVoid] = useState(false);
   const [viewOrderData, setViewOrderData] = useState<any>([]);
   const [receiptDetails, setReceiptDetails] = useState<any>({});
+  const [startDate, setStartDate] = useState<any>('');
+  const [endDate, setEndDate] = useState<any>('');
   useEffect(() => {
     const value: any = localStorage.getItem('user');
 
@@ -71,7 +73,7 @@ function Reports() {
       render: (_, record) => {
         const orderId = record.id.substring(record.id.length - 7);
         return (
-          <Button danger onClick={() => viewOrder(record, true)}>
+          <Button danger onClick={() => viewOrder(record, true)} disabled={record?.order.isVoid}>
             {orderId}
           </Button>
         );
@@ -123,7 +125,8 @@ function Reports() {
     let orderMapData;
     const start = moment(dateString).format('YYYY-MM-DD');
     const end = moment(dateString).format('YYYY-MM-DD');
-
+    setStartDate(start);
+    setEndDate(end);
     const resultOrder = await collections.order
       .find({
         selector: {
@@ -166,14 +169,20 @@ function Reports() {
     setIsModalOpen(false);
   };
 
-  const itemListTable = (
-    <Table
-      style={{ width: '100%' }}
-      columns={itemListColumns}
-      dataSource={viewOrderData.order}
-      pagination={false}
-    />
-  );
+  const itemListTable = () => {
+    const orderDataTable = { ...viewOrderData.order };
+    delete orderDataTable.isVoid;
+    const dataArray = Object.keys(orderDataTable).map((key) => orderDataTable[key]);
+
+    return (
+      <Table
+        style={{ width: '100%' }}
+        columns={itemListColumns}
+        dataSource={dataArray}
+        pagination={false}
+      />
+    );
+  };
 
   const handleReprint = async () => {
     const { order, customerMoney, total, totalRegularPrice, id } = viewOrderData;
@@ -196,15 +205,79 @@ function Reports() {
         console.log(error);
       });
   };
+  const confirm: any = async () => {
+    const { order } = viewOrderData;
+    let dataFetchInventory;
 
-  const confirm: any = (e: React.MouseEvent<HTMLElement>) => {
-    console.log(e);
-    message.success('Click on Yes');
+    const resultInventoriesFetch = await collections.inventory.find().exec();
+    if (resultInventoriesFetch && resultInventoriesFetch.length > 0) {
+      dataFetchInventory = resultInventoriesFetch.map((item) => item.toJSON());
+    } else {
+      dataFetchInventory = [];
+    }
+
+    order.map(async (orderItem) => {
+      const { id: orderId, quantity: orderQuantity } = orderItem;
+
+      const existingDoc = await collections.inventory
+        .findOne({ selector: { product_id: orderId } })
+        .exec();
+      // eslint-disable-next-line no-underscore-dangle
+      const { date, product_id: productId, sold, quantity, id } = existingDoc._data;
+      if (existingDoc) {
+        await existingDoc.update({
+          id,
+          product_id: productId,
+          quantity,
+          sold: sold - orderQuantity,
+          date,
+        });
+      }
+      const inventoryItem = dataFetchInventory.find((item) => item.product_id === id);
+      if (inventoryItem) {
+        return {
+          ...inventoryItem,
+          quantity: inventoryItem.quantity - quantity,
+        };
+      }
+      return orderItem;
+    });
+
+    const existingOrder = await collections.order
+      .findOne({ selector: { id: viewOrderData.id } })
+      .exec();
+    // eslint-disable-next-line no-underscore-dangle
+    const orderExisting = existingOrder._data;
+    if (existingOrder) {
+      await existingOrder.update({
+        ...orderExisting,
+        totalProfit: '0',
+        total: '0',
+        order: { ...order, isVoid: true },
+      });
+    }
+    let orderMapData;
+    const resultOrder = await collections.order
+      .find({
+        selector: {
+          date: {
+            $gte: `${startDate} 01:00:00 AM`,
+            $lte: `${endDate} 12:00:00 PM`,
+          },
+        },
+        sort: [{ date: 'asc' }],
+      })
+      .exec();
+    if (resultOrder && resultOrder.length > 0) {
+      orderMapData = resultOrder.map((item) => item.toJSON());
+    }
+    setOrderData(orderMapData);
+    setIsModalOpen(false);
+    message.success('Order item has been successfully voided!');
   };
 
   const cancel: any = (e: React.MouseEvent<HTMLElement>) => {
     console.log(e);
-    message.error('Click on No');
   };
   return (
     <div>
@@ -224,7 +297,7 @@ function Reports() {
           onCancel={handleCancel}
           footer={null}
         >
-          {itemListTable}
+          {itemListTable()}
           <div>
             <div
               style={{
@@ -262,8 +335,8 @@ function Reports() {
             <Col>
               {isVoid ? (
                 <Popconfirm
-                  title="Void the order!"
-                  description="Are you sure to void this order?"
+                  title="Confirm Void Order"
+                  description="Are you certain you want to void this order?"
                   onConfirm={confirm}
                   onCancel={cancel}
                   okText="Yes"
