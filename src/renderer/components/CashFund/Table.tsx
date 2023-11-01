@@ -3,6 +3,7 @@ import React from 'react';
 import { Button, Popconfirm, Space, Table, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import collections from '@/renderer/database/db';
+import moment from 'moment';
 
 interface DataType {
   id: number;
@@ -50,29 +51,35 @@ const ProjectTable = ({ projects, handleDeleteResult, editProject }): any => {
     {
       title: 'Action',
       key: 'cashFund.id',
-      render: (_, record) => (
-        <Space size="middle">
-          <Button
-            type="primary"
-            style={{ backgroundColor: '#d9d764' }}
-            onClick={() => editProject(record)}
-          >
-            Update {record.name}{' '}
-          </Button>
+      render: (_, record: any) => {
+        const dateToday = moment().format('YYYY-MM-DD');
+        return (
+          <Space size="middle">
+            <Button
+              type="primary"
+              style={{ backgroundColor: '#d9d764' }}
+              onClick={() => editProject(record)}
+              disabled={dateToday !== moment(record.date).format('YYYY-MM-DD')}
+            >
+              Update {record.name}{' '}
+            </Button>
 
-          <Popconfirm
-            title="Are you sure to delete this task?"
-            onConfirm={() => {
-              doConfirm(record.id);
-            }}
-            onCancel={cancel}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button danger>Delete</Button>
-          </Popconfirm>
-        </Space>
-      ),
+            <Popconfirm
+              title="Are you sure to delete this task?"
+              onConfirm={() => {
+                doConfirm(record.id);
+              }}
+              onCancel={cancel}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button danger style={{ display: 'none' }}>
+                Delete
+              </Button>
+            </Popconfirm>
+          </Space>
+        );
+      },
     },
   ];
 
