@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { DateRangePicker } from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css'; // theme css file
-import { Button, Modal } from 'antd';
+import { Alert, Button, Modal } from 'antd';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import moment from 'moment';
 import collections from '../database/db';
+import { activationCheck } from '../assets/js/activation';
 
 const Dashboard = () => {
   const [totalSales, setTotalSales] = useState(0);
@@ -16,6 +17,7 @@ const Dashboard = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [totalRangeAmoutbyDate, setTotalRangeDateAmount] = useState<any>([]);
 
+  const activation = activationCheck();
   const dashboardData = async () => {
     let inventoryData;
     const result = await collections.products.find().exec();
@@ -213,8 +215,25 @@ const Dashboard = () => {
   );
   return (
     <div>
-      <div style={{ textAlign: 'right', marginBottom: '12px' }}>
-        <Button type="primary" onClick={showModal}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '12px',
+        }}
+      >
+        {activation === undefined ? (
+          <Alert
+            description="To unlock premium benefits, seize the opportunity to monitor your daily sales and profits. Message us now!"
+            type="warning"
+            showIcon
+          />
+        ) : (
+          <h1>{}</h1>
+        )}
+
+        <Button type="primary" onClick={showModal} style={{ justifyContent: 'start-end' }}>
           Calendar
         </Button>
         <Modal
@@ -258,7 +277,14 @@ const Dashboard = () => {
               flexDirection: 'column',
             }}
           >
-            <h2 style={{ fontSize: '34px', margin: 0 }}>₱{totalSales && totalSales.toFixed(2)}</h2>
+            {activation === undefined ? (
+              <h2 style={{ fontSize: '34px', margin: 0 }}>₱00.00</h2>
+            ) : (
+              <h2 style={{ fontSize: '34px', margin: 0 }}>
+                ₱{totalSales && totalSales.toFixed(2)}
+              </h2>
+            )}
+
             <h2 style={{ fontSize: '20px', margin: 0, color: '#4cdf65' }}>Total Sales</h2>
           </div>
         </div>
@@ -285,9 +311,14 @@ const Dashboard = () => {
               flexDirection: 'column',
             }}
           >
-            <h2 style={{ fontSize: '34px', margin: 0 }}>
-              ₱{totalProfit && totalProfit.toFixed(2)}
-            </h2>
+            {activation === undefined ? (
+              <h2 style={{ fontSize: '34px', margin: 0 }}>₱00.00</h2>
+            ) : (
+              <h2 style={{ fontSize: '34px', margin: 0 }}>
+                ₱{totalProfit && totalProfit.toFixed(2)}
+              </h2>
+            )}
+
             <h2 style={{ fontSize: '20px', margin: 0, color: '#e9781c' }}>Total Profits</h2>
           </div>
         </div>

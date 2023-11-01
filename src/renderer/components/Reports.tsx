@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import type { DatePickerProps } from 'antd';
-import { Button, DatePicker, Table, Modal, Row, Col, Popconfirm, message } from 'antd';
+import { Button, DatePicker, Table, Modal, Row, Col, Popconfirm, message, Alert } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import moment from 'moment';
 import axios from 'axios';
 import collections from '../database/db';
+import { activationCheck } from '../assets/js/activation';
 
 interface DataType {
   product_id: any;
@@ -25,6 +26,8 @@ function Reports() {
   const [receiptDetails, setReceiptDetails] = useState<any>({});
   const [startDate, setStartDate] = useState<any>('');
   const [endDate, setEndDate] = useState<any>('');
+  const activation = activationCheck();
+
   useEffect(() => {
     const value: any = localStorage.getItem('user');
 
@@ -62,7 +65,11 @@ function Reports() {
       title: 'View Order',
       key: 'key', // Define a unique key for the column
       render: (_, record) => (
-        <Button type="primary" onClick={() => viewOrder(record, false)}>
+        <Button
+          type="primary"
+          onClick={() => viewOrder(record, false)}
+          disabled={activation === undefined}
+        >
           View
         </Button>
       ),
@@ -73,7 +80,11 @@ function Reports() {
       render: (_, record) => {
         const orderId = record.id.substring(record.id.length - 7);
         return (
-          <Button danger onClick={() => viewOrder(record, true)} disabled={record?.order.isVoid}>
+          <Button
+            danger
+            onClick={() => viewOrder(record, true)}
+            disabled={record?.order.isVoid || activation === undefined}
+          >
             {orderId}
           </Button>
         );
@@ -281,11 +292,30 @@ function Reports() {
   };
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1>Reports</h1>
+      <h1>Reports</h1>
+
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '16px',
+        }}
+      >
+        <div>
+          {activation === undefined ? (
+            <Alert
+              description="Unlock exclusive perks by managing your daily transactions, including the option to void items for refunds and reprint receipts. Reach out to us today!"
+              type="warning"
+              showIcon
+            />
+          ) : (
+            <h1>{}</h1>
+          )}
+        </div>
         <DatePicker
           onChange={onChange}
-          style={{ width: '30%', textAlign: 'left', marginBottom: '12px' }}
+          style={{ width: '30%', textAlign: 'left', marginBottom: '12px', marginLeft: '24px' }}
         />
       </div>
       {orderListTable}
