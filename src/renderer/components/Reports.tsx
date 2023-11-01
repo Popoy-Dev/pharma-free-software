@@ -26,10 +26,11 @@ function Reports() {
   const [receiptDetails, setReceiptDetails] = useState<any>({});
   const [startDate, setStartDate] = useState<any>('');
   const [endDate, setEndDate] = useState<any>('');
-  const activation = activationCheck();
+  const [activation, setActivation] = useState<any>('');
 
   useEffect(() => {
     const value: any = localStorage.getItem('user');
+    setActivation(activationCheck());
 
     if (value) {
       const parseData = JSON.parse(value);

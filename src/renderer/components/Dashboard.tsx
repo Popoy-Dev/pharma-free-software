@@ -16,8 +16,8 @@ const Dashboard = () => {
   const [selectedEndDate, setSelectedEndDate] = useState<Date>(new Date());
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [totalRangeAmoutbyDate, setTotalRangeDateAmount] = useState<any>([]);
+  const [activation, setActivation] = useState<any>('');
 
-  const activation = activationCheck();
   const dashboardData = async () => {
     let inventoryData;
     const result = await collections.products.find().exec();
@@ -181,6 +181,7 @@ const Dashboard = () => {
     setTotalRangeDateAmount(result);
   };
   useEffect(() => {
+    setActivation(activationCheck());
     dashboardData();
   }, []);
 
