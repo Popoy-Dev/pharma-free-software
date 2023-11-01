@@ -48,6 +48,8 @@ const ProductInventoryTable = ({ productsInventories }): any => {
         pharmacy: parseData.pharmacy_name,
         address: parseData.address,
         cashierName: parseData.cashier_name,
+        tin_no: parseData.tin_no,
+        cell_no: parseData.cell_no,
       };
 
       setReceiptDetails(shopDetails);
