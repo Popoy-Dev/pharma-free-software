@@ -1,11 +1,14 @@
-import { Breadcrumb, Button, Form, Input, notification } from 'antd';
+import { Alert, Breadcrumb, Button, Form, Input, Select, notification } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { HomeOutlined, UserOutlined } from '@ant-design/icons';
+import { activationCheck } from '../assets/js/activation';
 
 function Settings() {
   const [isSetting, setIsSetting] = useState(true);
   const [isActivation, setIsActivation] = useState(false);
-  const [isNewSetup, seIsNewSetup] = useState(false);
+  const [isNewSetup, IsNewSetup] = useState(false);
+  const [activationSuccess, isActivationSuccess] = useState(false);
+  const [remainingDays, setRemainingDays] = useState('');
   const [pharmacyInfo, setPharmacyInfo] = useState<any>('');
   const [api, contextHolder] = notification.useNotification();
 
@@ -39,7 +42,7 @@ function Settings() {
 
   useEffect(() => {
     const value: any = localStorage.getItem('user');
-    seIsNewSetup(true);
+    IsNewSetup(true);
     if (value) {
       const parseData = JSON.parse(value);
       setPharmacyInfo(parseData);
@@ -60,6 +63,11 @@ function Settings() {
     setIsActivation(false);
   };
 
+  const handleActivation = () => {
+    setIsSetting(false);
+    setIsActivation(true);
+  };
+
   const breadCrumbTabs = () => (
     <Breadcrumb
       items={[
@@ -68,23 +76,109 @@ function Settings() {
           title: (
             <div style={{ cursor: 'pointer' }}>
               <HomeOutlined />
-              <span>Settings</span>
+              <span>Receipt Details</span>
             </div>
           ),
         },
         {
-          onClick: handleSetting,
+          onClick: handleActivation,
           title: (
             <div style={{ cursor: 'pointer' }}>
               <UserOutlined />
-              <span>Application List</span>
+              <span>Activation</span>
             </div>
           ),
         },
       ]}
     />
   );
+  const openNotificationWithIconActivation = (type: any) => {
+    let message = '';
+    let description = '';
 
+    if (type === 'success') {
+      message = 'Success!';
+      description = 'Application successfully activated.';
+    } else {
+      message = 'Error!';
+      description = 'Wrong activation number.';
+    }
+    api[type]({
+      message,
+      description,
+    });
+  };
+
+  const onFinishActivate = (values: any) => {
+    let word2;
+    switch (values.duration) {
+      case 'onemonth':
+        word2 = 'onemo';
+        break;
+      case 'sixmonth':
+        word2 = 'sixmo';
+        break;
+      case 'oneyear':
+        word2 = 'oneyr';
+        break;
+      default:
+        break;
+    }
+
+    const today = new Date();
+    const month = today.toLocaleString('default', { month: 'short' }).toLowerCase();
+    const day = String(today.getDate()).padStart(2, '0');
+    const word1 = `${month}${day}`;
+
+    let combinedWord = '';
+    const maxLen = Math.max(word1.length, word2.length);
+
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < maxLen; i++) {
+      if (i < word1.length) {
+        combinedWord += word1[i];
+      }
+      if (i < word2.length) {
+        combinedWord += word2[i];
+      }
+    }
+
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const activateNumberYear = combinedWord + currentYear;
+
+    if (values.activation === combinedWord) {
+      isActivationSuccess(true);
+      localStorage.setItem('activation', JSON.stringify(activateNumberYear));
+      openNotificationWithIconActivation('success');
+    } else {
+      openNotificationWithIconActivation('error');
+    }
+  };
+
+  useEffect(() => {
+    // localStorage.setItem('activation', 'null');
+
+    const value: any = localStorage.getItem('activation');
+    if (!value || value === 'null') {
+      isActivationSuccess(false);
+    } else {
+      isActivationSuccess(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    const value: any = localStorage.getItem('activation');
+    if (!value || value === 'null') {
+      isActivationSuccess(false);
+    } else {
+      const differenceInDays = activationCheck();
+      setRemainingDays(differenceInDays);
+      if (differenceInDays === 0 || !differenceInDays) {
+        localStorage.setItem('activation', 'null');
+      }
+    }
+  }, [activationSuccess]);
   const settingsComponent = () =>
     // eslint-disable-next-line no-unused-expressions
     isSetting ? (
@@ -157,7 +251,66 @@ function Settings() {
 
   const activationComponent = () =>
     // eslint-disable-next-line no-unused-expressions
-    isActivation ? <div> hello</div> : '';
+    isActivation ? (
+      <div>
+        <div style={{ width: '50%', margin: 'auto', marginTop: '36px' }}>
+          <h3 style={{ textAlign: 'left' }}>Activation</h3>
+          {!activationSuccess ? (
+            <Form
+              name="activate"
+              labelCol={{ span: 8 }}
+              wrapperCol={{ span: 16 }}
+              style={{ maxWidth: 600 }}
+              onFinish={onFinishActivate}
+              onFinishFailed={onFinishFailed}
+              autoComplete="off"
+            >
+              <Form.Item
+                label="Duration Period"
+                name="duration"
+                rules={[{ required: true, message: 'Please select duration!' }]}
+              >
+                <Select
+                  style={{ width: '100%' }}
+                  options={[
+                    { value: 'onemonth', label: 'One Month' },
+                    { value: 'sixmonth', label: 'Six Month' },
+                    { value: 'oneyear', label: '1 Year' },
+                  ]}
+                />
+              </Form.Item>
+
+              <Form.Item<any>
+                label="Activation Number"
+                name="activation"
+                rules={[{ required: true, message: 'Please input activation number!' }]}
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  style={{ display: pharmacyInfo ? '' : '' }}
+                >
+                  Submit
+                </Button>
+              </Form.Item>
+            </Form>
+          ) : (
+            <Alert
+              message="Premium Access Activated."
+              description={`Congratulations! Your premium access has been successfully activated. You now have ${remainingDays} days to enjoy all the premium features.`}
+              type="success"
+              showIcon
+            />
+          )}
+        </div>
+      </div>
+    ) : (
+      ''
+    );
 
   return (
     <div>
