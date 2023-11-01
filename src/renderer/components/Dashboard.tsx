@@ -73,8 +73,8 @@ const Dashboard = () => {
         .find({
           selector: {
             date: {
-              $gte: `${start} 01:00:00 AM`,
-              $lte: `${end} 12:00:00 PM`,
+              $gte: `${start} 00:00:00 AM`,
+              $lte: `${end} 23:59:59 PM`,
             },
           },
         })
