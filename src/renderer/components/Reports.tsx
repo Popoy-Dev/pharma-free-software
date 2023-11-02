@@ -92,6 +92,12 @@ function Reports() {
           </Button>
         );
       },
+      sorter: (a, b) => {
+        const isVoidA = a.order?.isVoid || false;
+        const isVoidB = b.order?.isVoid || false;
+
+        return isVoidA - isVoidB; // Sort in ascending order
+      },
     },
   ];
 
