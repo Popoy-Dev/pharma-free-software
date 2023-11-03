@@ -440,7 +440,9 @@ const ProductInventoryTable = ({ productsInventories }): any => {
                   </Button>
                 </>
               )}
-              TotalProfit: {totalProfit}{' '}
+              <div style={{ marginTop: '12px' }}>
+                Change: {customerMoney > total && (customerMoney - total).toFixed(2)}{' '}
+              </div>
             </div>
           </div>
         </div>
