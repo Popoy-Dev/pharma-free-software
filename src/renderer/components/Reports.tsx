@@ -71,7 +71,7 @@ function Reports() {
         <Button
           type="primary"
           onClick={() => viewOrder(record, false)}
-          disabled={activation === undefined}
+          disabled={activation === undefined || activation === 0}
         >
           View
         </Button>
@@ -86,7 +86,7 @@ function Reports() {
           <Button
             danger
             onClick={() => viewOrder(record, true)}
-            disabled={record?.order.isVoid || activation === undefined}
+            disabled={record?.order.isVoid || activation === undefined || activation === 0}
           >
             {orderId}
           </Button>
@@ -312,7 +312,7 @@ function Reports() {
         }}
       >
         <div>
-          {activation === undefined ? (
+          {activation === undefined || activation === 0 ? (
             <Alert
               description="Unlock exclusive perks by managing your daily transactions, including the option to void items for refunds and reprint receipts. Reach out to us today!"
               type="warning"

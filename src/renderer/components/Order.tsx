@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
+import axios from 'axios';
 import OrderTable from './Order/Table';
 import collections from '../database/db';
 
@@ -10,6 +11,7 @@ function Order() {
   const [inventories, setInventories] = useState<any>([]);
   const [productsInventories, setProductsInvetories] = useState<any>([]);
   const [productsSearch, setSearchProducts] = useState<any>([]);
+  const [isPrinterConnected, setIsPrinterConnected] = useState(false);
 
   const getInventoryAndProducts = async () => {
     const inventoryResult = await collections.inventory.find().exec();
@@ -51,6 +53,19 @@ function Order() {
   }, [products, inventories]);
   useEffect(() => {
     getInventoryAndProducts();
+
+    axios
+      .get('http://localhost:5012/advertisements')
+      .then((response) => {
+        if (response.status === 200) {
+          setIsPrinterConnected(true);
+        } else {
+          setIsPrinterConnected(true);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, []);
   const handleSearch = async (e: any) => {
     const result = productsInventories.filter((data) => {
@@ -72,7 +87,17 @@ function Order() {
           width: '53%',
         }}
       >
-        <h1>Order</h1>
+        <div>
+          <h1>Order</h1>
+          <div style={{ marginTop: '-24px' }}>
+            {isPrinterConnected ? (
+              <p style={{ color: 'green' }}>Printer is Connected</p>
+            ) : (
+              <p style={{ color: 'red' }}>Printer is not connected</p>
+            )}
+          </div>
+        </div>
+
         <Input
           onKeyUp={handleSearch}
           prefix={<SearchOutlined />}

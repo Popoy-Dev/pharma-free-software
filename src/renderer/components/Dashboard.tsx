@@ -224,7 +224,7 @@ const Dashboard = () => {
           marginBottom: '12px',
         }}
       >
-        {activation === undefined ? (
+        {activation === undefined || activation === 0 ? (
           <Alert
             description="To unlock premium benefits, seize the opportunity to monitor your daily sales and profits. Message us now!"
             type="warning"
@@ -278,7 +278,7 @@ const Dashboard = () => {
               flexDirection: 'column',
             }}
           >
-            {activation === undefined ? (
+            {activation === undefined || activation === 0 ? (
               <h2 style={{ fontSize: '34px', margin: 0 }}>₱00.00</h2>
             ) : (
               <h2 style={{ fontSize: '34px', margin: 0 }}>
@@ -312,7 +312,7 @@ const Dashboard = () => {
               flexDirection: 'column',
             }}
           >
-            {activation === undefined ? (
+            {activation === undefined || activation === 0 ? (
               <h2 style={{ fontSize: '34px', margin: 0 }}>₱00.00</h2>
             ) : (
               <h2 style={{ fontSize: '34px', margin: 0 }}>
@@ -354,7 +354,7 @@ const Dashboard = () => {
         <AreaChart
           width={1000}
           height={400}
-          data={totalRangeAmoutbyDate}
+          data={activation === undefined || (activation === 0 ? [] : totalRangeAmoutbyDate)}
           margin={{
             top: 10,
             right: 30,
