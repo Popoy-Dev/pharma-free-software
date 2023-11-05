@@ -357,7 +357,7 @@ const ProductInventoryTable = ({ productsInventories }): any => {
         }
       });
       axios
-        .post('http://localhost:3000/add', {
+        .post('http://localhost:5012/add', {
           cartList,
           customerMoney,
           total,
@@ -393,7 +393,7 @@ const ProductInventoryTable = ({ productsInventories }): any => {
           key: `${product.id}-${Math.random()}`,
         }))}
         pagination={{
-          defaultPageSize: 2,
+          defaultPageSize: 5,
           total: productsInventories?.total,
         }}
       />
@@ -419,9 +419,10 @@ const ProductInventoryTable = ({ productsInventories }): any => {
             style={{
               position: 'absolute',
               display: 'inline',
-              bottom: 0,
+              bottom: '-10px',
               right: 0,
               marginRight: '12px',
+              marginTop: '25px',
               marginBottom: '12px',
             }}
           >

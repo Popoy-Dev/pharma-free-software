@@ -106,7 +106,7 @@ const ProductTable = ({ products, handleDeleteResult, editProduct }): any => {
         key: product.id,
       }))}
       pagination={{
-        defaultPageSize: 2,
+        defaultPageSize: 5,
         total: products?.total,
       }}
     />

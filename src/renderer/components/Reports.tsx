@@ -209,7 +209,7 @@ function Reports() {
     const cartList = order;
     const reprint = true;
     await axios
-      .post('http://localhost:3000/add', {
+      .post('http://localhost:5012/add', {
         cartList,
         customerMoney,
         total,

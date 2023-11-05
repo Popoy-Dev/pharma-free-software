@@ -51,7 +51,7 @@ const ProductInventoryTable = ({ products, viewInventory }): any => {
         key: product.id,
       }))}
       pagination={{
-        defaultPageSize: 2,
+        defaultPageSize: 10,
         total: products?.total,
       }}
     />

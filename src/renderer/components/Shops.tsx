@@ -9,7 +9,7 @@ function Shops() {
 
   useEffect(() => {
     axios
-      .get('http://localhost:3000/advertisements')
+      .get('http://localhost:5012/advertisements')
       .then((response) => {
         setData(response.data);
       })
