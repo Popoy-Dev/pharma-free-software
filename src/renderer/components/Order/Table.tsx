@@ -38,18 +38,17 @@ const ProductInventoryTable = ({ productsInventories }): any => {
   const formattedDate = currentDate.format('YYYY-MM-DD hh:mm:ss A');
 
   useEffect(() => {
-    const value: any = localStorage.getItem('user');
+    const value: any = localStorage?.getItem('user');
 
     if (value) {
       const parseData = JSON.parse(value);
-      setOwnerId(parseData.ownerId);
-
+      setOwnerId(parseData?.ownerId);
       const shopDetails = {
-        pharmacy: parseData.pharmacy_name,
-        address: parseData.address,
-        cashierName: parseData.cashier_name,
-        tin_no: parseData.tin_no,
-        cell_no: parseData.cell_no,
+        pharmacy: parseData?.pharmacy_name,
+        address: parseData?.address,
+        cashierName: parseData?.cashier_name,
+        tin_no: parseData?.tin_no,
+        cell_no: parseData?.cell_no,
       };
 
       setReceiptDetails(shopDetails);
@@ -380,74 +379,81 @@ const ProductInventoryTable = ({ productsInventories }): any => {
     setFocusedInput(null);
   };
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-      {contextHolder}
+    <div>
       {receiptWarningMessage && (
         <Alert message="Warning" description={receiptWarningMessage} type="warning" showIcon />
       )}
-      <Table
-        style={{ width: '53%' }}
-        columns={columns}
-        dataSource={productsInventories.map((product) => ({
-          ...product,
-          key: `${product.id}-${Math.random()}`,
-        }))}
-        pagination={{
-          defaultPageSize: 5,
-          total: productsInventories?.total,
-        }}
-      />
-      <Card
-        title="Order list"
-        extra={
-          <Checkbox onChange={handleSenior} checked={isSeniorGlobalValue}>
-            Senior{' '}
-          </Checkbox>
-        }
-        bordered={false}
-        style={{
-          width: '45%',
-          marginLeft: '12px',
-          boxShadow: '5px 5px 5px 10px #888888',
-          overflowY: 'auto',
-          top: '-90px',
-        }}
-      >
-        <div style={{ marginBottom: '24px' }}>
-          {orderListTable}
-          <div
-            style={{
-              position: 'absolute',
-              display: 'inline',
-              bottom: '-10px',
-              right: 0,
-              marginRight: '12px',
-              marginTop: '25px',
-              marginBottom: '12px',
-            }}
-          >
-            <div>
-              Total: {total}{' '}
-              {cartList.length !== 0 && (
-                <>
-                  <InputNumber
-                    min={1}
-                    onChange={(value) => handleCustomerMoney(value)}
-                    value={customerMoney}
-                    onBlur={(e) => e.preventDefault()} // Prevent focus from moving away
-                  />
-                  <Button type="primary" onClick={handleSaveOrder} disabled={total > customerMoney}>
-                    Buy
-                  </Button>
-                </>
-              )}
-              <div style={{ marginTop: '12px' }}>
-                Change: {customerMoney > total && (customerMoney - total).toFixed(2)}{' '}
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        {contextHolder}
+
+        <Table
+          style={{ width: '53%' }}
+          columns={columns}
+          dataSource={productsInventories.map((product) => ({
+            ...product,
+            key: `${product.id}-${Math.random()}`,
+          }))}
+          pagination={{
+            defaultPageSize: 5,
+            total: productsInventories?.total,
+          }}
+        />
+        <Card
+          title="Order list"
+          extra={
+            <Checkbox onChange={handleSenior} checked={isSeniorGlobalValue}>
+              Senior{' '}
+            </Checkbox>
+          }
+          bordered={false}
+          style={{
+            width: '45%',
+            marginLeft: '12px',
+            boxShadow: '5px 5px 5px 10px #888888',
+            overflowY: 'auto',
+            top: '-90px',
+          }}
+        >
+          <div style={{ marginBottom: '24px' }}>
+            {orderListTable}
+            <div
+              style={{
+                position: 'absolute',
+                display: 'inline',
+                bottom: '-10px',
+                right: 0,
+                marginRight: '12px',
+                marginTop: '25px',
+                marginBottom: '12px',
+              }}
+            >
+              <div>
+                Total: {total}{' '}
+                {cartList.length !== 0 && (
+                  <>
+                    <InputNumber
+                      min={1}
+                      onChange={(value) => handleCustomerMoney(value)}
+                      value={customerMoney}
+                      onBlur={(e) => e.preventDefault()} // Prevent focus from moving away
+                    />
+                    <Button
+                      type="primary"
+                      onClick={handleSaveOrder}
+                      disabled={total > customerMoney}
+                    >
+                      Buy
+                    </Button>
+                  </>
+                )}
+                <div style={{ marginTop: '12px' }}>
+                  Change: {customerMoney > total && (customerMoney - total).toFixed(2)}{' '}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 };

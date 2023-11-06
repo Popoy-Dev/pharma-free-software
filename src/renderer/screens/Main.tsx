@@ -1,9 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
 import { Layout, Menu, theme } from 'antd';
 import Cashfund from '../components/Cashfund';
-import Employees from '../components/Employees';
-import Attendance from '../components/Attendance';
 import Products from '../components/Products';
 import Inventory from '../components/Inventory';
 import Reports from '../components/Reports';
@@ -27,8 +25,6 @@ const App: React.FC = () => {
     { icon: UserOutlined, label: 'Reports' },
     { icon: UserOutlined, label: 'Shops' },
     { icon: UserOutlined, label: 'Settings' },
-    { icon: UserOutlined, label: 'Employees' },
-    { icon: VideoCameraOutlined, label: 'Attendance' },
   ];
 
   const handleMenuClick = (item) => {
@@ -41,8 +37,6 @@ const App: React.FC = () => {
       Reports: <Reports />,
       Shops: <Shops />,
       Settings: <Settings />,
-      Employees: <Employees />,
-      Attendance: <Attendance />,
     };
     setComponent(components[item.label]);
   };

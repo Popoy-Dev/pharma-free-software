@@ -22,10 +22,10 @@ function Order() {
     setInventories(inventoryResult);
   };
   const getInventoryProducts = async () => {
-    const order = products.map((product) => {
-      const inventoryItem = inventories.filter((inventory) => inventory.product_id === product.id);
+    const order = products?.map((product) => {
+      const inventoryItem = inventories?.filter((inventory) => inventory.product_id === product.id);
 
-      const stockTotal = inventoryItem.reduce(
+      const stockTotal = inventoryItem?.reduce(
         (accumulator, item) => accumulator + parseInt(item.quantity, 10),
         0,
       );
