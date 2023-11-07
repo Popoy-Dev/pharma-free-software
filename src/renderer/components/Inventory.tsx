@@ -1,12 +1,13 @@
 /* eslint-disable no-console */
 import React, { useState, useEffect } from 'react';
-import { Form, Input } from 'antd';
+import { Alert, Button, Form, Input } from 'antd';
 import { v4 as uuid } from 'uuid';
 import moment from 'moment';
-import { SearchOutlined } from '@ant-design/icons';
+import { DownloadOutlined, SearchOutlined } from '@ant-design/icons';
 import ProductInventoryModal from './Inventory/Modal';
 import ProductInventoryTable from './Inventory/Table';
 import collections from '../database/db';
+import { activationCheck } from '../assets/js/activation';
 
 function Inventory() {
   const id = uuid();
@@ -21,6 +22,7 @@ function Inventory() {
 
   const [selectProduct, setSelectProduct] = useState<any>({});
   const [inventoryProducts, setInventoryProducts] = useState<any>([]);
+  const [activation, setActivation] = useState<any>('');
 
   // Create a Moment.js object for the current date
   const currentDate = moment();
@@ -121,6 +123,7 @@ function Inventory() {
     console.log('Failed:', errorInfo);
   };
   useEffect(() => {
+    setActivation(activationCheck());
     getProducts();
   }, []);
 
@@ -142,17 +145,82 @@ function Inventory() {
 
     setSearchProducts(result);
   };
+
+  const exportToCSV = () => {
+    const newArray = products.map((obj) => {
+      const { id: removeId, ...rest }: any = obj;
+      return rest;
+    });
+
+    const header = Object.keys(newArray[0]).join(',');
+
+    const csvData = newArray.map((row) => Object.values(row).join(',')).join('\n');
+
+    const csvString = `${header}\n${csvData}`;
+
+    console.log(csvString);
+
+    const blob = new Blob([csvString], { type: 'text/csv' });
+
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'Inventory.csv';
+    a.click();
+
+    window.URL.revokeObjectURL(url);
+    return '';
+  };
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
         <h1>Inventory</h1>
+        <div>
+          <Button
+            type="primary"
+            shape="round"
+            disabled={activation === undefined || activation === 0}
+            onClick={exportToCSV}
+            icon={<DownloadOutlined />}
+          >
+            Download Inventory
+          </Button>
+        </div>
+      </div>
+
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
+        <div>
+          {activation === undefined || activation === 0 ? (
+            <Alert
+              description="Effortlessly export your inventory data for greater control and insights.if you're ready to unleash the power of data export, reach out to us today!"
+              type="warning"
+              showIcon
+            />
+          ) : (
+            <h1>{}</h1>
+          )}
+        </div>
         <Input
           onKeyUp={handleSearch}
           prefix={<SearchOutlined />}
           placeholder="Product name"
-          style={{ width: '30%', textAlign: 'left', marginBottom: '12px' }}
+          style={{ width: '30%', textAlign: 'left', marginBottom: '12px', marginLeft: '24px' }}
         />
       </div>
+
       <div style={{ textAlign: 'right' }}>
         <ProductInventoryModal
           title="Title"

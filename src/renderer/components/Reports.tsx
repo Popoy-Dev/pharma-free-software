@@ -309,7 +309,6 @@ function Reports() {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          marginBottom: '16px',
         }}
       >
         <div>
