@@ -18,7 +18,7 @@ interface DataType {
   stockTotal: string;
 }
 
-const ProductInventoryTable = ({ productsInventories }): any => {
+const ProductInventoryTable = ({ productsInventories, searchInputFocused }): any => {
   const [cartList, setCartList] = useState<any>([]);
   const [data, setData] = useState([]); // Your data here
   const [focusedInput, setFocusedInput] = useState(null);
@@ -168,10 +168,12 @@ const ProductInventoryTable = ({ productsInventories }): any => {
             onChange={(event) => handleInputChange(event, i)}
             disabled={
               Number(record.stockTotal) - totalSold[record.id] <= 0 ||
-              Number(record.stockTotal) === 0
+              Number(record.stockTotal) === 0 ||
+              disabledButtons.includes(record.id)
             }
             value={data[i] || 0}
-            autoFocus={focusedInput === i} // Autofocus based on focusedInput state
+            // eslint-disable-next-line max-len
+            autoFocus={!searchInputFocused && focusedInput === i} // Autofocus based on focusedInput state
           />
           <Button
             type="primary"

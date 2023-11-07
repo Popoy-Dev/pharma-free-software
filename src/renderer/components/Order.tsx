@@ -12,6 +12,7 @@ function Order() {
   const [productsInventories, setProductsInvetories] = useState<any>([]);
   const [productsSearch, setSearchProducts] = useState<any>([]);
   const [isPrinterConnected, setIsPrinterConnected] = useState(false);
+  const [searchInputFocused, setSearchInputFocused] = useState(false);
 
   const getInventoryAndProducts = async () => {
     const inventoryResult = await collections.inventory.find().exec();
@@ -77,6 +78,15 @@ function Order() {
 
     setSearchProducts(result);
   };
+
+  const handleSearchFocus = () => {
+    setSearchInputFocused(true);
+  };
+
+  const handleSearchBlur = () => {
+    setSearchInputFocused(false);
+  };
+
   return (
     <div>
       <div
@@ -99,6 +109,8 @@ function Order() {
         </div>
 
         <Input
+          onFocus={handleSearchFocus}
+          onBlur={handleSearchBlur}
           onKeyUp={handleSearch}
           prefix={<SearchOutlined />}
           placeholder="Search Product"
@@ -106,7 +118,7 @@ function Order() {
         />
       </div>
       <div style={{ textAlign: 'right' }} />
-      <OrderTable productsInventories={productsSearch} />
+      <OrderTable productsInventories={productsSearch} searchInputFocused ={searchInputFocused } />
     </div>
   );
 }
