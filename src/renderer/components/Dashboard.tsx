@@ -3,7 +3,15 @@ import { DateRangePicker } from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import { Alert, Button, Modal } from 'antd';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
 import moment from 'moment';
 import collections from '../database/db';
 import { activationCheck } from '../assets/js/activation';
@@ -255,7 +263,7 @@ const Dashboard = () => {
           {modalContent}
         </Modal>
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '60px' }}>
         <div
           style={{
             flex: '1',
@@ -350,24 +358,25 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-      <div style={{ width: '100%', textAlign: 'center', marginTop: '400px', margin: 'auto' }}>
-        <AreaChart
-          width={1000}
-          height={400}
-          data={activation === undefined || (activation === 0 ? [] : totalRangeAmoutbyDate)}
-          margin={{
-            top: 10,
-            right: 30,
-            left: 0,
-            bottom: 0,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="Date" />
-          <YAxis />
-          <Tooltip />
-          <Area type="monotone" dataKey="scales" stroke="#8884d8" fill="#8884d8" />
-        </AreaChart>
+      <div style={{ width: '100%', textAlign: 'center', margin: 'auto' }}>
+        <ResponsiveContainer width="100%" height={400}>
+          <AreaChart
+            data={activation === undefined || (activation === 0 ? [] : totalRangeAmoutbyDate)}
+            margin={{
+              top: 10,
+              right: 0,
+              left: 0,
+              bottom: 0,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="Date" />
+            <YAxis />
+            <Tooltip />
+            <Area type="monotone" dataKey="scales" stroke="#8884d8" fill="#8884d8" />
+          </AreaChart>
+        </ResponsiveContainer>
+
         <h1 style={{ textAlign: 'center', color: '#4e9d5b' }}>Sales Chart</h1>
       </div>
     </div>

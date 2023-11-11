@@ -157,7 +157,7 @@ function Products() {
           add product
         </Button>
         <ProductModal
-          title="Title"
+          title={editValue ? `Edit product` : 'Add Product'}
           open={open}
           onOk={handleOk}
           confirmLoading={confirmLoading}
