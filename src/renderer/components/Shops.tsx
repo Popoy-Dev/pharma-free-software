@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Badge, Card, Col, Image, Pagination, Row } from 'antd';
+import { Alert, Badge, Card, Col, Image, Pagination, Row } from 'antd';
 import axios from 'axios';
 
 function Shops() {
@@ -52,6 +52,11 @@ function Shops() {
   const displayedData = data.slice(startItem, endItem);
   return (
     <div>
+      <Alert
+        description="Feel free to reach out if you have products suitable for selling on BotikaTech."
+        type="info"
+        showIcon
+      />
       <Row gutter={16}>
         {displayedData.map((item, index) => (
           // eslint-disable-next-line react/no-array-index-key
