@@ -41,7 +41,7 @@ function Settings() {
   };
 
   useEffect(() => {
-    const value: any = localStorage.getItem('user');
+    const value: any = localStorage?.getItem('user');
     IsNewSetup(true);
     if (value) {
       const parseData = JSON.parse(value);
@@ -159,7 +159,7 @@ function Settings() {
   useEffect(() => {
     // localStorage.setItem('activation', 'null');
 
-    const value: any = localStorage.getItem('activation');
+    const value: any = localStorage?.getItem('activation');
     if (!value || value === 'null') {
       isActivationSuccess(false);
     } else {
@@ -168,7 +168,7 @@ function Settings() {
   }, []);
 
   useEffect(() => {
-    const value: any = localStorage.getItem('activation');
+    const value: any = localStorage?.getItem('activation');
     if (!value || value === 'null') {
       isActivationSuccess(false);
     } else {
@@ -285,7 +285,7 @@ function Settings() {
                 name="activation"
                 rules={[{ required: true, message: 'Please input activation number!' }]}
               >
-                <Input />
+                <Input.Password placeholder="Input activation number" />
               </Form.Item>
 
               <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
