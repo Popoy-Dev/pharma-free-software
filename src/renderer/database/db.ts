@@ -10,6 +10,7 @@ import {
   productSchema,
   productInventorySchema,
   customerOrderSchema,
+  customerSchema,
 } from './schema';
 
 addRxPlugin(RxDBDevModePlugin);
@@ -39,6 +40,9 @@ const collections = await db.addCollections({
   },
   order: {
     schema: customerOrderSchema,
+  },
+  customers: {
+    schema: customerSchema,
   },
 });
 

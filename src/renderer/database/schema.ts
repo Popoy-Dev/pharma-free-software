@@ -112,6 +112,31 @@ const customerOrderSchema = {
   required: ['id', 'order', 'totalProfit', 'total', 'date'],
 };
 
+const customerSchema = {
+  version: 0,
+  type: 'object',
+  primaryKey: 'id',
+  properties: {
+    id: {
+      type: 'string',
+      maxLength: 100, // <- the primary key must have set maxLength
+    },
+    customerName: {
+      type: 'string',
+    },
+    notes: {
+      type: 'string',
+    },
+    cardNumber: {
+      type: 'string',
+    },
+    birthday: {
+      type: 'string',
+    },
+  },
+  required: ['id', 'customerName', 'notes'],
+};
+
 const employeeSchema = {
   version: 0,
   primaryKey: 'id',
@@ -203,4 +228,5 @@ export {
   productSchema,
   productInventorySchema,
   customerOrderSchema,
+  customerSchema,
 };

@@ -9,6 +9,7 @@ import Settings from '../components/Settings';
 import Order from '../components/Order';
 import Dashboard from '../components/Dashboard';
 import Shops from '../components/Shops';
+import Customers from '../components/Customers';
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -23,6 +24,7 @@ const App: React.FC = () => {
     { icon: UserOutlined, label: 'Inventory' },
     { icon: UserOutlined, label: 'Order' },
     { icon: UserOutlined, label: 'Reports' },
+    { icon: UserOutlined, label: 'Customers' },
     { icon: UserOutlined, label: 'Shops' },
     { icon: UserOutlined, label: 'Settings' },
   ];
@@ -35,6 +37,7 @@ const App: React.FC = () => {
       Inventory: <Inventory />,
       Order: <Order />,
       Reports: <Reports />,
+      Customers: <Customers />,
       Shops: <Shops />,
       Settings: <Settings />,
     };
