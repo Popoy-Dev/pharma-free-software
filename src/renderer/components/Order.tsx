@@ -61,7 +61,7 @@ function Order() {
         if (response.status === 200) {
           setIsPrinterConnected(true);
         } else {
-          setIsPrinterConnected(true);
+          setIsPrinterConnected(false);
         }
       })
       .catch((error) => {
@@ -118,7 +118,7 @@ function Order() {
         />
       </div>
       <div style={{ textAlign: 'right' }} />
-      <OrderTable productsInventories={productsSearch} searchInputFocused ={searchInputFocused } />
+      <OrderTable productsInventories={productsSearch} searchInputFocused={searchInputFocused} />
     </div>
   );
 }

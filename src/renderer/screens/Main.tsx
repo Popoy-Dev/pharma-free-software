@@ -1,5 +1,15 @@
 import React, { useState, useMemo } from 'react';
-import { UserOutlined } from '@ant-design/icons';
+import {
+  SettingTwoTone,
+  ShopTwoTone,
+  IdcardTwoTone,
+  FileTextTwoTone,
+  ShoppingTwoTone,
+  ReconciliationTwoTone,
+  ExperimentTwoTone,
+  DollarTwoTone,
+  FundTwoTone,
+} from '@ant-design/icons';
 import { Layout, Menu, theme } from 'antd';
 import Cashfund from '../components/Cashfund';
 import Products from '../components/Products';
@@ -18,15 +28,15 @@ const App: React.FC = () => {
   const { colorBgContainer } = theme.useToken().token;
 
   const sideBarItems = [
-    { icon: UserOutlined, label: 'Dashboard' },
-    { icon: UserOutlined, label: 'Cashfund' },
-    { icon: UserOutlined, label: 'Products' },
-    { icon: UserOutlined, label: 'Inventory' },
-    { icon: UserOutlined, label: 'Order' },
-    { icon: UserOutlined, label: 'Reports' },
-    { icon: UserOutlined, label: 'Customers' },
-    { icon: UserOutlined, label: 'Shops' },
-    { icon: UserOutlined, label: 'Settings' },
+    { icon: FundTwoTone, label: 'Dashboard' },
+    { icon: DollarTwoTone, label: 'Cashfund' },
+    { icon: ExperimentTwoTone, label: 'Products' },
+    { icon: ReconciliationTwoTone, label: 'Inventory' },
+    { icon: ShoppingTwoTone, label: 'Order' },
+    { icon: FileTextTwoTone, label: 'Reports' },
+    { icon: IdcardTwoTone, label: 'Customers' },
+    { icon: ShopTwoTone, label: 'Shops' },
+    { icon: SettingTwoTone, label: 'Settings' },
   ];
 
   const handleMenuClick = (item) => {
