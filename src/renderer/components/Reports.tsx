@@ -319,7 +319,9 @@ function Reports() {
               showIcon
             />
           ) : (
-            <h1>{}</h1>
+            <h3 style={{ color: 'gray', fontWeight: 400 }}>
+              No. of transactions: {ordedData?.length}
+            </h3>
           )}
         </div>
         <DatePicker
