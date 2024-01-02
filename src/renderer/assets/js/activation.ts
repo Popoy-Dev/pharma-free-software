@@ -21,26 +21,26 @@ export function activationCheck() {
     }
   }
   const datepurschase = duration + year;
-  console.log('datepurschase', datepurschase);
+  // console.log('datepurschase', datepurschase);
 
   let dateExpired;
   if (dateDuration === 'onemo') {
     const targetDate = moment(datepurschase, 'MMMDDYYYY');
     dateExpired = moment(targetDate).add(1, 'months').add(1, 'day');
-    console.log('Original Date:', targetDate.format('YYYY-MM-DD'));
-    console.log('New Date (after adding 6 months):', dateExpired.format('YYYY-MM-DD'));
+    // console.log('Original Date:', targetDate.format('YYYY-MM-DD'));
+    // console.log('New Date (after adding 6 months):', dateExpired.format('YYYY-MM-DD'));
   }
   if (dateDuration === 'sixmo') {
     const targetDate = moment(datepurschase, 'MMMDDYYYY');
     dateExpired = moment(targetDate).add(6, 'months').add(1, 'day');
-    console.log('Original Date:', targetDate.format('YYYY-MM-DD'));
-    console.log('New Date (after adding 6 months):', dateExpired.format('YYYY-MM-DD'));
+    // console.log('Original Date:', targetDate.format('YYYY-MM-DD'));
+    // console.log('New Date (after adding 6 months):', dateExpired.format('YYYY-MM-DD'));
   }
   if (dateDuration === 'oneyr') {
     const targetDate = moment(datepurschase, 'MMMDDYYYY');
     dateExpired = moment(targetDate).add(12, 'months').add(1, 'day');
-    console.log('Original Date:', targetDate.format('YYYY-MM-DD'));
-    console.log('New Date (after adding 6 months):', dateExpired.format('YYYY-MM-DD'));
+    // console.log('Original Date:', targetDate.format('YYYY-MM-DD'));
+    // console.log('New Date (after adding 6 months):', dateExpired.format('YYYY-MM-DD'));
   }
 
   // Get the current date as a Moment.js object
