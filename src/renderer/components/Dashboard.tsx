@@ -167,23 +167,26 @@ const Dashboard = () => {
     dateRangeData?.forEach((element: any) => {
       const newArray = {
         Date: moment(element.date, 'YYYY-MM-DD hh:mm:ss A').format('MMMM DD YYYY'),
-        scales: Number(element.total),
+        totalSale: Number(element.total),
       };
       dataArray.push(newArray);
     });
-
     dataArray?.forEach((element) => {
-      const { Date, scales } = element;
-      if (dateScalesMap[Date]) {
-        dateScalesMap[Date] += scales;
-      } else {
-        dateScalesMap[Date] = scales;
-      }
-    });
+      const { Date, totalSale } = element;
 
+      if (!dateScalesMap[Date]) {
+        dateScalesMap[Date] = {
+          totalSale: 0,
+          transactions: 0,
+        };
+      }
+      dateScalesMap[Date].totalSale += totalSale;
+      dateScalesMap[Date].transactions += 1;
+    });
     const result = Object.keys(dateScalesMap).map((Date) => ({
       Date,
-      scales: Number(dateScalesMap[Date]?.toFixed(2)),
+      totalSales: Number(dateScalesMap[Date]?.totalSale.toFixed(2)),
+      transactions: dateScalesMap[Date].transactions,
     }));
 
     setTotalRangeDateAmount(result);
@@ -373,7 +376,8 @@ const Dashboard = () => {
             <XAxis dataKey="Date" />
             <YAxis />
             <Tooltip />
-            <Area type="monotone" dataKey="scales" stroke="#8884d8" fill="#8884d8" />
+            <Area type="monotone" dataKey="totalSales" stroke="#37a84a" fill="#82ca9d" />
+            <Area type="monotone" dataKey="transactions" stroke="#bd5f11" fill="#ffc658" />
           </AreaChart>
         </ResponsiveContainer>
 

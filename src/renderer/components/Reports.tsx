@@ -207,7 +207,11 @@ function Reports() {
 
   const handleReprint = async () => {
     const { order, customerMoney, total, totalRegularPrice, id } = viewOrderData;
-    const cartList = order;
+    let cartList = order;
+
+    if (typeof cartList === 'object' && !Array.isArray(cartList)) {
+      cartList = [cartList];
+    }
     const reprint = true;
     await axios
       .post('http://localhost:5012/add', {
